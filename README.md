@@ -1,4 +1,4 @@
-# UAThorns_tab
+# UAThorns
 
 This collection of thorns, developed at the University of Arizona, includes:
 * IllinoisGRMHD - a modified version of the publicly available GRMHD thorn which is compatible with tabulated, finite temperature equations of state.
