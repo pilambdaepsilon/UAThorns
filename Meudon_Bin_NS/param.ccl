@@ -1,0 +1,72 @@
+# Parameter definitions for thorn Meudon_Bin_NS
+
+SHARES: ADMBase
+
+EXTENDS KEYWORD initial_data
+{
+  "Meudon_Bin_NS" :: "LORENE Binary Neutron Star initial data"
+}
+
+EXTENDS KEYWORD initial_lapse
+{
+  "Meudon_Bin_NS" :: "LORENE Binary Neutron Star initial data"
+}
+
+EXTENDS KEYWORD initial_shift
+{
+  "Meudon_Bin_NS" :: "LORENE Binary Neutron Star initial data"
+}
+
+EXTENDS KEYWORD initial_dtlapse
+{
+  "Meudon_Bin_NS" :: "LORENE Binary Neutron Star initial data"
+}
+
+EXTENDS KEYWORD initial_dtshift
+{
+  "Meudon_Bin_NS" :: "LORENE Binary Neutron Star initial data"
+}
+
+
+SHARES: HydroBase
+
+EXTENDS KEYWORD initial_hydro
+{
+  "Meudon_Bin_NS" :: "LORENE Binary Neutron Star initial data"
+}
+
+
+PRIVATE:
+
+STRING filename "Input file name containing LORENE data"
+{
+  "" :: "Any filename, potentially including path"
+} ""
+
+STRING eos_table "Initial data EOS identifyer"
+{
+  "" :: "Any valid EOS name in EOSOmni"
+} "2D_Polytrope"
+
+STRING eos_table_filepath "Directory containing the EOS file used to generate the initial data"
+{
+  "" :: "Directory name, default (empty string) is 'do not tell Lorene to overwrite info found in Lorene data'"
+} ""
+
+STRING beta_file "Directory containing the beta-equilibrium Ye(rho) function -- rho is in cgs"
+{
+  "" :: "Directory name, default (empty string) is 'do not tell Lorene to overwrite info found in Lorene data'"
+} ""
+
+BOOLEAN init_real "are you initializing realistic ID?"
+{
+} "no"
+
+BOOLEAN recalculate_eps "Should eps be recalculated (default), or taken from Lorene data?"
+{
+} "yes"
+
+CCTK_REAL eos_precision "precision of EOS calculations in EOSOmni"
+{
+  0:* :: "any positive number"
+} 1.e-8

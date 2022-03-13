@@ -1,0 +1,14 @@
+Cactus Code Thorn Meudon_Bin_NS
+Author(s)    : Erik Schnetter
+               Frank Löffler
+               Roberto De Pietri
+Maintainer(s): Einstein Toolkit Maintainers
+Licence      : GPL
+--------------------------------------------------------------------------
+
+1. Purpose
+
+Import LORENE Bin_NS binary neutron star initial data.
+
+This thorn is one of three closely related thorns Meudon_Bin_BH,
+Meudon_Bin_NS, and Meudon_Mag_NS which all import LORENE initial data.

@@ -1,0 +1,35 @@
+# Interface definition for thorn Meudon_Bin_NS
+
+IMPLEMENTS: Meudon_Bin_NS
+
+INHERITS: grid SummationByParts ADMBase HydroBase
+
+
+
+SUBROUTINE Diff_gv (CCTK_POINTER_TO_CONST IN cctkGH, \
+                    CCTK_INT IN dir, \
+                    CCTK_REAL IN ARRAY var, \
+                    CCTK_REAL OUT ARRAY dvar, \
+                    CCTK_INT IN table_handle)
+USES FUNCTION Diff_gv
+
+void FUNCTION EOS_Omni_press(CCTK_INT IN eoskey,         \
+			     CCTK_INT IN havetemp,       \
+			     CCTK_REAL IN rf_precision,   \
+                             CCTK_INT IN npoints,        \
+			     CCTK_REAL IN ARRAY rho,     \
+			     CCTK_REAL INOUT ARRAY eps,  \
+			     CCTK_REAL INOUT ARRAY temp, \
+			     CCTK_REAL IN ARRAY ye,      \
+			     CCTK_REAL OUT ARRAY press,  \
+			     CCTK_INT OUT ARRAY keyerr,  \
+			     CCTK_INT OUT anyerr)
+
+USES FUNCTION EOS_Omni_press
+
+CCTK_INT FUNCTION EOS_Omni_GetHandle(CCTK_STRING IN name)
+USES FUNCTION EOS_Omni_GetHandle
+
+public:
+
+int init_eos_key type = SCALAR "Initial data eos handle for EOS_Omni"
