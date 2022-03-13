@@ -1,0 +1,129 @@
+# Parameter definitions for thorn ConservativeToPrimitive
+
+# SHARES: EOS_Omni
+REAL gamma_th "thermal gamma parameter"
+{
+ 0:* :: "Physical values"
+-1   :: "forbidden value to make sure it is explicitly set in the parfile"
+} -1
+
+REAL GAMMA_SPEED_LIMIT "speed limiting gamma"
+{
+ 0:* :: "Physical values"
+ 0   :: "forbidden value to make sure it is explicitly set in the parfile"
+} 10.0
+
+KEYWORD c2p_EOS_type "Specify which type of Equation Of State" STEERABLE=always
+{
+ "2D_Polytrope"         :: "Polytropic EOS, P = K rho^Gamma"
+ "Ideal_Fluid"          :: "Gamma Law, P = eps * rho * (Gamma - 1)"
+ "Hybrid"               :: "Piecewise Polytropic + Gamma law"
+ "nuc_eos"              :: "Tabulated general EOS"
+ "cold_tabulated"       :: "Cold tabulated EOS + Gamma law"
+ "barotropic_tabulated" :: "Barotropic tabulated EOS + Gamma law"
+ "ideal_gas"            :: "Clapeyron's ideal gas law - mostly for comparison with Siegel et al."
+} "2D_Polytrope"
+
+BOOLEAN c2p_excise "Excise ??????" STEERABLE=always
+{
+} "no"
+
+BOOLEAN c2p_grace "Grace ??????" STEERABLE=always
+{
+} "no"
+
+
+BOOLEAN c2p_rhoT_key "Hot equation of state"
+{
+} "no"
+
+BOOLEAN c2p_use_eps_atmo "Force atmosphere value of energy density" STEERABLE=always
+{
+} "no"
+
+KEYWORD c2p_preferred_algorithm "Specify which algorithm to use" STEERABLE=always
+{
+    "NR_3DE"      :: "3D Newton-Raphson based on Cerdá-Durán 2008 with eps"
+    "NR_3DP"      :: "3D Newton-Raphson based on Cerdá-Durán 2008 with P"
+    "NR_2DR"      :: "2D Newton-Raphson based on Cerdá-Durán 2008 with rho"
+    "NR_2DW"      :: "2D Newton-Raphson based on Cerdá-Durán 2008 with W"
+    "palenzuela"  :: "Palenzuela"
+    "NR_2D_Noble" :: "Noble"
+    "Newman"      :: "Newman"
+    "HARM"        :: "HARM"
+    "auto"        :: "let the code decide"
+} "NR_2D_Noble"
+
+CCTK_INT c2p_max_iterations "How many iteration in the scheme"  STEERABLE=always
+{
+    1: :: "At least a few"
+} 30
+
+CCTK_INT c2p_extra_iterations "How many extra iteration in the scheme"  STEERABLE=always
+{
+    0: :: ""
+} 0
+
+CCTK_REAL c2p_tolerance "Which tolerance in the scheme" STEERABLE=always{
+    0:* :: "A small (but not too small) value"
+} 5e-9
+
+BOOLEAN c2p_use_backup_scheme "Use a backup scheme in case first fails?" STEERABLE=always
+{
+} "no"
+
+CCTK_REAL c2p_tolerance_retry "Which tolerance in the scheme if the first attempt failed" STEERABLE=always{
+    0:* :: "A small (but not too small) value"
+} 5e-7
+
+KEYWORD c2p_algorithm_retry "Specify which algorithm to use" STEERABLE=always
+{
+    "NR_3DE"      :: "3D Newton-Raphson based on Cerdá-Durán 2008 with eps"
+    "NR_3DP"      :: "3D Newton-Raphson based on Cerdá-Durán 2008 with P"
+    "NR_2DR"      :: "2D Newton-Raphson based on Cerdá-Durán 2008 with rho"
+    "NR_2DW"      :: "2D Newton-Raphson based on Cerdá-Durán 2008 with W"
+    "palenzuela"  :: "Palenzuela"
+    "NR_2D_Noble" :: "Noble"
+    "Newman"      :: "Newman"
+    "HARM"        :: "HARM"
+    "auto"        :: "let the code decide"
+} "palenzuela"
+
+BOOLEAN c2p_enforce_v2_smaller_than_1 "Enforce v2 < 1" STEERABLE=always
+{
+} "yes"
+
+# Atmospheric properties
+
+CCTK_REAL c2p_rho_atmo "Rest mass density of the atmosphere" STEERABLE=always {
+    0:* :: "A small (but not too small) value"
+} 5e-15
+
+CCTK_REAL c2p_eps_atmo "Rest mass density of the atmosphere" STEERABLE=always {
+    -1.0:* :: "A small (but not too small) value"
+} 5e-15
+
+CCTK_REAL c2p_rho_atmo_tolerance "Tolerance in finding the atmosphere" STEERABLE=always {
+    0:* :: "A small (but not too small) value"
+} 0.01
+
+CCTK_REAL c2p_T_atmo "Temperature of the atmosphere" STEERABLE=always {
+    0:* :: "A value in MeV correspoinding to cold matter"
+} 0.1
+
+CCTK_REAL c2p_ye_atmo "Electron fraction of the atmosphere" STEERABLE=always {
+    0:* :: "A reasonable value"
+} 0.01
+
+BOOLEAN c2p_retain_B_atmo "Keep the magnetic field in the atmosphere?" STEERABLE=always
+{
+} "no"
+
+BOOLEAN Ye_force_cold_beta_equil "force beta equilibrium Ye during evolution" STEERABLE=always
+{
+} "no"
+
+STRING beta_equil_file "Directory/file containing the beta-equilibrium Ye(rho) function -- rho is in cgs"
+{
+  "" :: "Directory/file name"
+} ""

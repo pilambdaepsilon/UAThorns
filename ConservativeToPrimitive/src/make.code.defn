@@ -1,0 +1,12 @@
+# Main make.code.defn file for thorn ConservativeToPrimitive
+# $Header:$
+
+# Source files in this directory
+# SRCS = con2prim_MHD.c ConservativeToPrimitive.c \
+#        brent.c NR_2D_Noble.c palenzuela.c NR_2D_rhoT.c \
+#        NR_2D_WT.c NR.c Newman.c NR_utils.c \
+#        EOS_utils.c
+
+SRCS = EOS_utils.c ConservativeToPrimitive.c con2prim_MHD.c \
+       brent.c palenzuela.c Newman.c NR.c NR_utils.c NR_2D_WT.c NR_2D_rhoT.c \
+       NR_2D_Noble.c HARM.c

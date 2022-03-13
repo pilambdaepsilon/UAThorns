@@ -1,0 +1,12 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Units}{}% 2
+\BOOKMARK [1][-]{section.3}{Using This Thorn}{}% 3
+\BOOKMARK [2][-]{subsection.3.1}{Basic Usage}{section.3}% 4
+\BOOKMARK [2][-]{subsection.3.2}{Parameter Settings}{section.3}% 5
+\BOOKMARK [1][-]{section.4}{Equations of State Details}{}% 6
+\BOOKMARK [2][-]{subsection.4.1}{Polytropic}{section.4}% 7
+\BOOKMARK [2][-]{subsection.4.2}{Gamma-Law}{section.4}% 8
+\BOOKMARK [2][-]{subsection.4.3}{Hybrid}{section.4}% 9
+\BOOKMARK [2][-]{subsection.4.4}{Finite-Temperature Nuclear EOS}{section.4}% 10
+\BOOKMARK [2][-]{subsection.4.5}{Cold Tabulated Nuclear EOS with Gamma Law}{section.4}% 11
+\BOOKMARK [1][-]{section.5}{Converting Old Parameter Files}{}% 12

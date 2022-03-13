@@ -1,0 +1,247 @@
+# Interface definition for thorn ConservativeToPrimitive
+
+IMPLEMENTS: ConservativeToPrimitive
+
+INCLUDES HEADER: ConservativeToPrimitive.h in ConservativeToPrimitive.h
+
+# INHERITS:  EOS_Omni EOS_Omni_Extra
+
+void FUNCTION EOS_nuc_eos_get_lims(CCTK_REAL OUT ARRAY rho_min,   \
+                               CCTK_REAL OUT ARRAY rho_max,   \
+                               CCTK_REAL OUT ARRAY t_min,     \
+                               CCTK_REAL OUT ARRAY t_max,     \
+                               CCTK_REAL OUT ARRAY ye_min,    \
+                               CCTK_REAL OUT ARRAY ye_max,    \
+                               CCTK_REAL OUT ARRAY eps_min,   \
+                               CCTK_REAL OUT ARRAY eps_max,   \
+                               CCTK_REAL OUT ARRAY press_min, \
+                               CCTK_REAL OUT ARRAY press_max  \
+                              )
+
+USES FUNCTION EOS_nuc_eos_get_lims
+
+
+void FUNCTION EOS_Omni_press(CCTK_INT IN eoskey,         \
+                             CCTK_INT IN havetemp,       \
+                             CCTK_REAL IN rf_precision,  \
+                             CCTK_INT IN npoints,        \
+                             CCTK_REAL IN ARRAY rho,     \
+                             CCTK_REAL INOUT ARRAY eps,  \
+                             CCTK_REAL INOUT ARRAY temp, \
+                             CCTK_REAL IN ARRAY ye,      \
+                             CCTK_REAL OUT ARRAY press,  \
+                             CCTK_INT OUT ARRAY keyerr,  \
+                             CCTK_INT OUT anyerr)
+
+USES FUNCTION EOS_Omni_press
+
+void FUNCTION EOS_Omni_short(CCTK_INT IN eoskey,                \
+			     CCTK_INT IN havetemp,              \
+			     CCTK_REAL IN rf_precision,         \
+                             CCTK_INT IN npoints,               \
+			     CCTK_REAL IN ARRAY rho,     	\
+			     CCTK_REAL INOUT ARRAY eps,  	\
+			     CCTK_REAL INOUT ARRAY temp, 	\
+			     CCTK_REAL IN ARRAY ye,      	\
+			     CCTK_REAL OUT ARRAY press,		\
+			     CCTK_REAL INOUT ARRAY entropy,	\
+			     CCTK_REAL OUT ARRAY cs2,  		\
+			     CCTK_REAL OUT ARRAY dedt, 		\
+			     CCTK_REAL OUT ARRAY dpderho,	\
+			     CCTK_REAL OUT ARRAY dpdrhoe,	\
+			     CCTK_REAL OUT ARRAY munu,  	\
+			     CCTK_INT OUT ARRAY keyerr,   	\
+                             CCTK_INT OUT anyerr)
+
+USES FUNCTION EOS_Omni_short
+
+void FUNCTION EOS_Omni_full(CCTK_INT IN eoskey,                \
+                             CCTK_INT IN havetemp,              \
+                             CCTK_REAL IN rf_precision,         \
+                             CCTK_INT IN npoints,               \
+                             CCTK_REAL IN ARRAY rho,            \
+                             CCTK_REAL INOUT ARRAY eps,         \
+                             CCTK_REAL INOUT ARRAY temp,        \
+                             CCTK_REAL IN ARRAY ye,             \
+                             CCTK_REAL OUT ARRAY press,		\
+                             CCTK_REAL INOUT ARRAY entropy,	\
+                             CCTK_REAL OUT ARRAY cs2,           \
+                             CCTK_REAL OUT ARRAY dedt,          \
+                             CCTK_REAL OUT ARRAY dpderho,	\
+                             CCTK_REAL OUT ARRAY dpdrhoe,	\
+                             CCTK_REAL OUT ARRAY xa,            \
+                             CCTK_REAL OUT ARRAY xh,            \
+                             CCTK_REAL OUT ARRAY xn,            \
+                             CCTK_REAL OUT ARRAY xp,            \
+                             CCTK_REAL OUT ARRAY abar,          \
+                             CCTK_REAL OUT ARRAY zbar,          \
+                             CCTK_REAL OUT ARRAY mue,           \
+                             CCTK_REAL OUT ARRAY mun,           \
+                             CCTK_REAL OUT ARRAY mup,           \
+                             CCTK_REAL OUT ARRAY muhat,         \
+                             CCTK_INT OUT ARRAY keyerr,         \
+                             CCTK_INT OUT anyerr)
+
+USES FUNCTION EOS_Omni_full
+
+
+void FUNCTION EOS_Omni_EpsFromPress(CCTK_INT IN eoskey,         \
+                             CCTK_INT IN havetemp,              \
+                             CCTK_REAL IN rf_precision,         \
+                             CCTK_INT IN npoints,               \
+                             CCTK_REAL IN ARRAY rho,            \
+                             CCTK_REAL INOUT ARRAY eps,         \
+                             CCTK_REAL INOUT ARRAY temp,        \
+                             CCTK_REAL IN ARRAY ye,             \
+                             CCTK_REAL IN ARRAY press,          \
+                             CCTK_REAL OUT ARRAY xeps,          \
+                             CCTK_INT OUT ARRAY keyerr,         \
+                             CCTK_INT OUT anyerr)
+
+USES FUNCTION EOS_Omni_EpsFromPress
+
+
+
+
+
+public:
+
+CCTK_INT FUNCTION Con2Prim(                 \
+    CCTK_REAL ARRAY       OUT  prim,         \
+    CCTK_REAL ARRAY       IN  metric_up,    \
+    CCTK_REAL ARRAY       IN  metric_lo,    \
+    CCTK_REAL ARRAY       INOUT cons,          \
+    CCTK_INT              IN cac_iter,       \
+    CCTK_INT              IN index,       \
+    CCTK_REAL             IN xco,         \
+    CCTK_REAL             IN yco,         \
+    CCTK_REAL             IN zco,         \
+    CCTK_REAL ARRAY       IN METRIC,          \
+    CCTK_REAL ARRAY       IN METRIC_PHYS,          \
+    CCTK_REAL ARRAY       IN METRIC_LAP_PSI4          \
+    )
+
+PROVIDES FUNCTION Con2Prim WITH con2primMHD LANGUAGE C
+
+CCTK_REAL FUNCTION P_from_prim(CCTK_REAL ARRAY IN prim)
+PROVIDES  FUNCTION P_from_prim WITH P_from_Prim LANGUAGE C
+
+CCTK_REAL FUNCTION Eps_from_prim(CCTK_REAL ARRAY IN prim)
+PROVIDES  FUNCTION Eps_from_prim WITH eps_from_Prim LANGUAGE C
+
+CCTK_REAL FUNCTION T_from_prim(CCTK_REAL ARRAY IN prim)
+PROVIDES  FUNCTION T_from_prim WITH T_from_Prim LANGUAGE C
+
+CCTK_REAL FUNCTION T_from_prim(CCTK_REAL ARRAY IN prim)
+
+void FUNCTION EOS_press_cold(      \
+    CCTK_REAL ARRAY IN  rho,           \
+    CCTK_REAL ARRAY IN ye,             \
+    CCTK_REAL ARRAY OUT prs,           \
+    CCTK_REAL ARRAY OUT eps,           \
+    CCTK_INT  ARRAY OUT keyerr,        \
+    CCTK_INT  ARRAY OUT anyerr         \
+)
+
+PROVIDES FUNCTION EOS_press_cold with EOS_Press_Cold LANGUAGE C
+
+USES FUNCTION EOS_Omni_press_ent_abar
+
+CCTK_INT FUNCTION EOS_Omni_press_ent_abar(  \
+    CCTK_INT        IN  eoskey,        \
+    CCTK_INT        IN  keytemp,       \
+    CCTK_REAL       IN  prec,          \
+    CCTK_REAL       IN  rho,           \
+    CCTK_REAL ARRAY OUT eps,           \
+    CCTK_REAL ARRAY OUT temp,          \
+    CCTK_REAL ARRAY OUT ye,            \
+    CCTK_REAL ARRAY OUT prs,           \
+    CCTK_REAL ARRAY OUT ent,           \
+    CCTK_REAL ARRAY OUT abar,          \
+    CCTK_INT  ARRAY OUT keyerr,        \
+    CCTK_INT  ARRAY OUT nEOS_calls     \
+)
+
+
+USES FUNCTION EOS_eps_from_press
+
+CCTK_INT FUNCTION EOS_eps_from_press(  \
+    CCTK_INT        IN  eoskey,        \
+    CCTK_REAL       IN  rho,           \
+    CCTK_REAL ARRAY OUT eps,           \
+    CCTK_REAL ARRAY OUT temp,          \
+    CCTK_REAL ARRAY OUT ye,            \
+    CCTK_REAL ARRAY OUT prs,           \
+    CCTK_INT  ARRAY OUT keyerr         \
+)
+
+void FUNCTION EOS_Omni_press_from_rhoenthalpy(CCTK_INT IN eoskey,         \
+                                                       CCTK_INT IN havetemp,       \
+                                                       CCTK_REAL IN rf_precision,  \
+                                                       CCTK_INT IN npoints,        \
+                                                       CCTK_REAL IN ARRAY rho,     \
+                                                       CCTK_REAL INOUT ARRAY eps,  \
+                                                       CCTK_REAL INOUT ARRAY temp, \
+                                                       CCTK_REAL IN ARRAY ye,      \
+                                                       CCTK_REAL OUT ARRAY press,  \
+                                                       CCTK_REAL INOUT ARRAY enth,  \
+                                                       CCTK_INT OUT ARRAY keyerr,\
+                                                       CCTK_INT OUT anyerr)
+
+USES FUNCTION EOS_Omni_press_from_rhoenthalpy
+
+void FUNCTION EOS_Omni_dpdrho_dpdt_dedrho_dedt(CCTK_INT IN eoskey,         \
+                                                       CCTK_INT IN havetemp,       \
+                                                       CCTK_REAL IN rf_precision,  \
+                                                       CCTK_INT IN npoints,        \
+                                                       CCTK_REAL IN ARRAY rho,     \
+                                                       CCTK_REAL INOUT ARRAY temp, \
+                                                       CCTK_REAL IN ARRAY ye,      \
+                                                       CCTK_REAL INOUT ARRAY eps,  \
+                                                       CCTK_REAL OUT ARRAY press,  \
+                                                       CCTK_REAL OUT ARRAY dpdrho,  \
+                                                       CCTK_REAL OUT ARRAY dpdt,  \
+                                                       CCTK_REAL OUT ARRAY dedrho,  \
+                                                       CCTK_REAL OUT ARRAY dedt,  \
+                                                       CCTK_INT OUT ARRAY keyerr,\
+                                                       CCTK_INT OUT anyerr)
+
+USES FUNCTION EOS_Omni_dpdrho_dpdt_dedrho_dedt
+
+
+void FUNCTION EOS_Omni_dpdrho_dpdeps_hinv(CCTK_INT IN eoskey,         \
+                                                    CCTK_REAL IN rf_precision,  \
+                                                    CCTK_INT IN npoints,        \
+                                                    CCTK_REAL IN ARRAY rho,     \
+                                                    CCTK_REAL INOUT ARRAY enth, \
+                                                    CCTK_REAL INOUT ARRAY temp, \
+                                                    CCTK_REAL IN ARRAY ye,      \
+                                                    CCTK_REAL INOUT ARRAY eps,  \
+                                                    CCTK_REAL OUT ARRAY press,  \
+                                                    CCTK_REAL OUT ARRAY dpdrho,  \
+                                                    CCTK_REAL OUT ARRAY dpdeps,  \
+                                                    CCTK_INT OUT ARRAY keyerr,\
+                                                    CCTK_INT OUT anyerr)
+
+USES FUNCTION EOS_Omni_dpdrho_dpdeps_hinv
+
+
+
+
+Protected:
+
+CCTK_INT c2p_eos_int type = scalar
+{
+    c2p_eos_eoskey
+    c2p_eos_keytemp
+} "Useful INTs to be shared"
+
+CCTK_REAL c2p_eos_real type = scalar
+{
+    c2p_eos_P_atmo
+    c2p_eos_T_atmo
+    c2p_eos_ye_atmo
+    c2p_eos_eps_atmo
+    c2p_eos_rho_atmo
+    c2p_eos_prec
+} "Useful REALs to be shared"

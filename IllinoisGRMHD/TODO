@@ -1,0 +1,20 @@
+General comments:
+### * use CCTK_REAL for floating point Cactus variables, not double since CCTK_REAL can be float or long double
+### * don't use exit(1) and printf() to report errors, instead use CCTK_VError (eg. stdout of non-rank0 procs is often lost)
+### * use CCTK_VInfo to report status not printf (CCTK_VInfo supports hooks)
+### * (optional) add "const" qualifier to constants defined outside of omp parallel regions
+### * all externally visible functions should be prefixed by IllinoisGRMHD_ (or put in an IllinoisGRMHD namespace -- note that this does not work for the extern "C" ones)
+### * (personal choice): you use very long lines, this is ok (your code, your style). Usually we prefer shorter lines (80 chars) but that is really each author's decision
+### * Please don't use tab characters in source files. This just messes up the code display for users that use a different length for tabs than you. Replace them with spaces.
+### * don't use explicitly spelled out decimals. The compiler will evaluate fractions at compile time anyway, ie use: (1./3.)*x instead of 0.3333*x
+### * (optional) consider passing CCTK_PASS_CTOC and DECLARE_CCTK_ARGUMENTS (may be slower though) rather than passing cctkGH and cctk_lsh
+### * gettimeofday may not exist, don' rely on it
+### * only pass by (non-const) reference objects that are actually going to be modified. Best is to pass by value.
+### * there are some unused functions with CCTK_FNAME() ie Fortran names defined. If they are not actually used I'd remove them. 
+### * README file needs to specify a license for the code
+* Write a thorn for automatically setting rho_b_atm and tau_atm. The inner workings of this thorn are easy to implement; making scheduling work for arbitrary initial data thorns is hard.
+
+Obsolete code/methods:
+* support symmetries using SymBase rather than cartgrid3d (ie remove SetCartSymGN)
+### * don't use "magic" numbers for Symmetry
+### * use CCTK_ERROR instead of CCTK_WARN(0,

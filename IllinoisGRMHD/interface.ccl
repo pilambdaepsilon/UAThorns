@@ -1,0 +1,443 @@
+# Interface definition for thorn IllinoisGRMHD
+
+implements: IllinoisGRMHD
+inherits: ADMBase, Boundary, SpaceMask, Tmunubase, HydroBase, grid
+
+includes header: IllinoisGRMHD_headers.h in IllinoisGRMHD_headers.h
+
+Friend: ConservativeToPrimitive
+
+USES INCLUDE: Symmetry.h
+USES INCLUDE: ConservativeToPrimitive.h
+
+public:
+
+#vvvvvvvv EVOLVED VARIABLES vvvvvvvv#
+#cctk_real grmhd_conservatives type = GF TAGS='prolongation="Lag3"' Timelevels=3
+cctk_real grmhd_conservatives type = GF Timelevels=3
+{
+  rho_star,tau,mhd_st_x,mhd_st_y,mhd_st_z,Yet  # Note that st = Stilde, as mhd_st_i = \tilde{S}_i.
+} "Evolved mhd variables"
+
+# These variables are semi-staggered:
+# Ax is defined on the semi-staggered grid (i,j+1/2,k+1/2)
+# WARNING: WILL NOT WORK PROPERLY WITHOUT SEMI-STAGGERED PROLONGATION/RESTRICTION:
+cctk_real em_Ax type = GF Timelevels=3 tags='Prolongation="STAGGER011"'
+{
+  Ax
+} "x-component of the vector potential, evolved when constrained_transport_scheme==3"
+
+# Ay is defined on the semi-staggered grid (i+1/2,j,k+1/2)
+# WARNING: WILL NOT WORK PROPERLY WITHOUT SEMI-STAGGERED PROLONGATION/RESTRICTION:
+cctk_real em_Ay type = GF Timelevels=3 tags='Prolongation="STAGGER101"'
+{
+  Ay
+} "y-component of the vector potential, evolved when constrained_transport_scheme==3"
+# WARNING: WILL NOT WORK PROPERLY WITHOUT SEMI-STAGGERED PROLONGATION/RESTRICTION:
+
+# Az is defined on the semi-staggered grid (i+1/2,j+1/2,k)
+cctk_real em_Az type = GF Timelevels=3 tags='Prolongation="STAGGER110"'
+{
+  Az
+} "z-component of the vector potential, evolved when constrained_transport_scheme==3"
+
+# psi6phi is defined on the staggered grid (i+1/2,j+1/2,k+1/2)
+# WARNING: WILL NOT WORK PROPERLY WITHOUT FULLY-STAGGERED PROLONGATION/RESTRICTION:
+#
+cctk_real em_psi6phi type = GF Timelevels=3 tags='Prolongation="STAGGER111"'
+{
+  psi6phi
+} "sqrt{gamma} Phi, where Phi is the em scalar potential"
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
+
+
+#vvvvvvv PRIMITIVE VARIABLES vvvvvvv#
+# TODO: split into groups with well defined symmetry properties: (rho_b, P, u0, Ye), (vx,vy,vz)
+cctk_real grmhd_primitives_allbutBi type = GF TAGS='InterpNumTimelevels=1 prolongation="none"'
+{
+  rho_b,P,vx,vy,vz,Ye,prim_eps,Temp,Wlorentz,Ent
+} "Primitive variables density, pressure, and components of three velocity v^i (and electron fraction). Note that v^i is defined in terms of 4-velocity as: v^i = u^i/u^0. Note that this definition differs from the Valencia formalism."
+# It is useful to split Bi from Bi_stagger, since we're generally only interested in outputting Bi for diagnostics
+cctk_real grmhd_primitives_Bi type = GF TAGS='InterpNumTimelevels=1 prolongation="none"'
+{
+  Bx,By,Bz
+} "B-field components defined at vertices."
+cctk_real grmhd_primitives_Bi_stagger type = GF TAGS='InterpNumTimelevels=1 prolongation="none"'
+{
+  Bx_stagger,By_stagger,Bz_stagger
+} "B-field components defined at staggered points [Bx_stagger at (i+1/2,j,k),By_stagger at (i,j+1/2,k),Bz_stagger at (i,j,k+1/2)]."
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
+
+#vvvvvvv EQUATION OF STATE VARIABLES vvvvvvv#
+REAL eos_params_arrays1 TYPE=ARRAY DISTRIB=CONSTANT DIM=1 SIZE=10
+{
+  rho_tab,P_tab,eps_tab
+} "Equation of state (EOS) parameters"
+
+REAL eos_params_arrays2 TYPE=ARRAY DISTRIB=CONSTANT DIM=1 SIZE=11
+{
+  k_tab,gamma_tab
+} "Equation of state (EOS) parameters"
+
+REAL eos_params_scalar TYPE = SCALAR
+{
+  n_poly
+} "polytropic index"
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
+
+#vvvvvvv BSSN-based quantities, computed from ADM quantities.v vvvvvvv#
+cctk_real BSSN_quantities type = GF TAGS='prolongation="none" Checkpoint="no"'
+{
+   gtxx,gtxy,gtxz,gtyy,gtyz,gtzz,gtupxx,gtupxy,gtupxz,gtupyy,gtupyz,gtupzz,phi_bssn,psi_bssn,lapm1
+} "BSSN quantities, computed from ADM quantities"
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
+
+private:
+
+#vvvvvvv DIAGNOSTIC GRIDFUNCTIONS vvvvvvv#
+cctk_real diagnostic_gfs type = GF TAGS='prolongation="none" Checkpoint="no"'
+{
+  failure_checker
+} "Gridfunction to track conservative-to-primitives solver fixes. Beware that this gridfunction is overwritten at each RK substep."
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
+
+#vvvvvvv TEMPORARY VARIABLES FOR RECONSTRUCTION vvvvvvv#
+cctk_real grmhd_primitives_reconstructed_temps type = GF TAGS='prolongation="none" Checkpoint="no"'
+{
+  ftilde_gf,temporary,
+  rho_br,Pr,vxr,vyr,vzr,Bxr,Byr,Bzr,Bx_staggerr,By_staggerr,Bz_staggerr,
+  rho_bl,Pl,vxl,vyl,vzl,Bxl,Byl,Bzl,Bx_staggerl,By_staggerl,Bz_staggerl,
+  vxrr,vxrl,vyrr,vyrl,vzrr,vzrl,vxlr,vxll,vylr,vyll,vzlr,vzll,Yer,Yel,
+  epsr,epsl,Tempr,Templ,Wlorentzr, Wlorentzl,Entr,Entl
+} "Temporary variables used for primitives reconstruction"
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
+
+#vvvvvvv RHS VARIABLES vvvvvvv#
+cctk_real grmhd_conservatives_rhs type = GF TAGS='prolongation="none" Checkpoint="no"'
+{
+  rho_star_rhs,tau_rhs,st_x_rhs,st_y_rhs,st_z_rhs,Yet_rhs
+} "Storage for the right-hand side of the partial_t rho_star, partial_t tau, and partial_t tilde{S}_i equations (and tilde{Ye}). Needed for MoL timestepping."
+
+cctk_real em_Ax_rhs type = GF TAGS='prolongation="none" Checkpoint="no"'
+{
+  Ax_rhs
+} "Storage for the right-hand side of the partial_t A_x equation. Needed for MoL timestepping."
+cctk_real em_Ay_rhs type = GF TAGS='prolongation="none" Checkpoint="no"'
+{
+  Ay_rhs
+} "Storage for the right-hand side of the partial_t A_y equation. Needed for MoL timestepping."
+cctk_real em_Az_rhs type = GF TAGS='prolongation="none" Checkpoint="no"'
+{
+  Az_rhs
+} "Storage for the right-hand side of the partial_t A_z equation. Needed for MoL timestepping."
+cctk_real em_psi6phi_rhs type = GF TAGS='prolongation="none" Checkpoint="no"'
+{
+  psi6phi_rhs
+} "Storage for the right-hand side of the partial_t (psi^6 Phi) equation. Needed for MoL timestepping."
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
+
+#vvvvvvv TEMPORARY VARIABLES USEFUL FOR A-FIELD EVOLUTION vvvvvvv#
+cctk_real grmhd_cmin_cmax_temps type = GF TAGS='prolongation="none" Checkpoint="no"'
+{
+  cmin_x,cmax_x,
+  cmin_y,cmax_y,
+  cmin_z,cmax_z
+} "Store min and max characteristic speeds in all three directions."
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
+
+#vvvvvvv TEMPORARY VARIABLES USEFUL FOR FLUX COMPUTATION vvvvvvv#
+cctk_real grmhd_flux_temps type = GF TAGS='prolongation="none" Checkpoint="no"'
+{
+  rho_star_flux,tau_flux,st_x_flux,st_y_flux,st_z_flux,Yet_flux
+} "Temporary variables for storing the flux terms of tilde{S}_i (and tilde{Ye})."
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
+
+#vvvvvvv T^{\mu \nu}, stored to avoid expensive recomputation vvvvvvv#
+cctk_real TUPmunu type = GF TAGS='prolongation="none" Checkpoint="no"'
+{
+  TUPtt,TUPtx,TUPty,TUPtz,TUPxx,TUPxy,TUPxz,TUPyy,TUPyz,TUPzz
+} "T^{mu nu}, stored to avoid expensive recomputation"
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
+
+###########################################################################
+####################################################
+###  Functions provided by MoL for registration  ###
+####################################################
+
+CCTK_INT FUNCTION MoLRegisterEvolved(CCTK_INT IN EvolvedIndex, \
+                                         CCTK_INT IN RHSIndex)
+CCTK_INT FUNCTION MoLRegisterEvolvedSlow(CCTK_INT IN EvolvedIndex, \
+                                         CCTK_INT IN RHSIndexSlow)
+CCTK_INT FUNCTION MoLRegisterConstrained(CCTK_INT IN ConstrainedIndex)
+CCTK_INT FUNCTION MoLRegisterEvolvedGroup(CCTK_INT IN EvolvedIndex, \
+                                          CCTK_INT IN RHSIndex)
+CCTK_INT FUNCTION MoLRegisterEvolvedGroupSlow(CCTK_INT IN EvolvedIndex, \
+                                          CCTK_INT IN RHSIndexSlow)
+CCTK_INT FUNCTION MoLRegisterConstrainedGroup(CCTK_INT IN ConstrainedIndex)
+CCTK_INT FUNCTION MoLRegisterSaveAndRestoreGroup(CCTK_INT IN SandRIndex)
+
+USES FUNCTION MoLRegisterEvolved
+USES FUNCTION MoLRegisterEvolvedSlow
+USES FUNCTION MoLRegisterConstrained
+USES FUNCTION MoLRegisterEvolvedGroup
+USES FUNCTION MoLRegisterEvolvedGroupSlow
+USES FUNCTION MoLRegisterConstrainedGroup
+USES FUNCTION MoLRegisterSaveAndRestoreGroup
+
+#########################################
+###  Aliased functions from Boundary  ###
+#########################################
+
+CCTK_INT FUNCTION Boundary_SelectVarForBC(CCTK_POINTER_TO_CONST IN GH, \
+  CCTK_INT IN faces, CCTK_INT IN boundary_width, CCTK_INT IN table_handle, \
+  CCTK_STRING IN var_name, CCTK_STRING IN bc_name)
+CCTK_INT FUNCTION Boundary_SelectGroupForBC(CCTK_POINTER_TO_CONST IN GH, \
+  CCTK_INT IN faces, CCTK_INT IN boundary_width, CCTK_INT IN table_handle, \
+  CCTK_STRING IN group_name, CCTK_STRING IN bc_name)
+
+USES FUNCTION Boundary_SelectVarForBC
+USES FUNCTION Boundary_SelectGroupForBC
+###########################################################################
+
+#########################################
+###  Aliased functions from Carpet    ###
+#########################################
+
+CCTK_INT FUNCTION                         \
+    GetRefinementLevel                    \
+        (CCTK_POINTER_TO_CONST IN cctkGH)
+USES FUNCTION GetRefinementLevel
+
+
+CCTK_INT FUNCTION Con2Prim(                 \
+    CCTK_REAL ARRAY       OUT  prim,         \
+    CCTK_REAL ARRAY       IN  metric_up,    \
+    CCTK_REAL ARRAY       IN  metric_lo,    \
+    CCTK_REAL ARRAY       INOUT cons,          \
+    CCTK_INT              IN cac_iter,       \
+    CCTK_INT              IN index,           \
+    CCTK_REAL              IN xco,           \
+    CCTK_REAL              IN yco,           \
+    CCTK_REAL              IN zco,           \
+    CCTK_REAL ARRAY       IN METRIC,          \
+    CCTK_REAL ARRAY       IN METRIC_PHYS,          \
+    CCTK_REAL ARRAY       IN METRIC_LAP_PSI4          \
+    )
+
+USES FUNCTION Con2Prim
+
+CCTK_INT FUNCTION harm_primitives_lowlevel_C2P(\
+    CCTK_INT IN index, \
+    CCTK_INT IN i_ind, \
+    CCTK_INT IN j_ind, \
+    CCTK_INT IN k_ind, \
+    CCTK_REAL ARRAY INOUT X_CO,\
+    CCTK_REAL ARRAY INOUT Y_CO,\
+    CCTK_REAL ARRAY INOUT Z_CO,\
+    CCTK_REAL ARRAY INOUT METRIC,           \
+    CCTK_REAL ARRAY INOUT METRIC_PHYS,      \
+    CCTK_REAL ARRAY INOUT METRIC_LAP_PSI4,  \
+    CCTK_REAL ARRAY INOUT CONSERVS,         \
+    CCTK_REAL ARRAY INOUT PRIMS,            \
+    CCTK_REAL ARRAY INOUT g4dn,  \
+    CCTK_REAL ARRAY INOUT g4up,  \
+    CCTK_INT IN iteration)
+
+USES FUNCTION harm_primitives_lowlevel_C2P
+
+void FUNCTION EOS_Omni_cs2(CCTK_INT IN eoskey,                  \
+                             CCTK_INT IN havetemp,              \
+                             CCTK_REAL IN rf_precision,         \
+                             CCTK_INT IN npoints,               \
+                             CCTK_REAL IN ARRAY rho,            \
+                             CCTK_REAL INOUT ARRAY eps,         \
+                             CCTK_REAL INOUT ARRAY temp,        \
+                             CCTK_REAL IN ARRAY ye,             \
+                             CCTK_REAL OUT ARRAY cs2,           \
+                             CCTK_INT OUT ARRAY keyerr,         \
+                             CCTK_INT OUT anyerr)
+
+USES FUNCTION EOS_Omni_cs2
+
+void FUNCTION EOS_Omni_EpsFromPress(CCTK_INT IN eoskey,         \
+                             CCTK_INT IN havetemp,              \
+                             CCTK_REAL IN rf_precision,         \
+                             CCTK_INT IN npoints,               \
+                             CCTK_REAL IN ARRAY rho,            \
+                             CCTK_REAL INOUT ARRAY eps,         \
+                             CCTK_REAL INOUT ARRAY temp,        \
+                             CCTK_REAL IN ARRAY ye,             \
+                             CCTK_REAL IN ARRAY press,          \
+                             CCTK_REAL OUT ARRAY xeps,          \
+                             CCTK_INT OUT ARRAY keyerr,         \
+                             CCTK_INT OUT anyerr)
+
+USES FUNCTION EOS_Omni_EpsFromPress
+
+void FUNCTION EOS_Omni_full(CCTK_INT IN eoskey,                \
+                             CCTK_INT IN havetemp,              \
+                             CCTK_REAL IN rf_precision,         \
+                             CCTK_INT IN npoints,               \
+                             CCTK_REAL IN ARRAY rho,            \
+                             CCTK_REAL INOUT ARRAY eps,         \
+                             CCTK_REAL INOUT ARRAY temp,        \
+                             CCTK_REAL IN ARRAY ye,             \
+                             CCTK_REAL OUT ARRAY press,		\
+                             CCTK_REAL INOUT ARRAY entropy,	\
+                             CCTK_REAL OUT ARRAY cs2,           \
+                             CCTK_REAL OUT ARRAY dedt,          \
+                             CCTK_REAL OUT ARRAY dpderho,	\
+                             CCTK_REAL OUT ARRAY dpdrhoe,	\
+                             CCTK_REAL OUT ARRAY xa,            \
+                             CCTK_REAL OUT ARRAY xh,            \
+                             CCTK_REAL OUT ARRAY xn,            \
+                             CCTK_REAL OUT ARRAY xp,            \
+                             CCTK_REAL OUT ARRAY abar,          \
+                             CCTK_REAL OUT ARRAY zbar,          \
+                             CCTK_REAL OUT ARRAY mue,           \
+                             CCTK_REAL OUT ARRAY mun,           \
+                             CCTK_REAL OUT ARRAY mup,           \
+                             CCTK_REAL OUT ARRAY muhat,         \
+                             CCTK_INT OUT ARRAY keyerr,         \
+                             CCTK_INT OUT anyerr)
+
+USES FUNCTION EOS_Omni_full
+
+void FUNCTION EOS_Omni_dpdrho_dpdt_dedrho_dedt(CCTK_INT IN eoskey,         \
+                                                       CCTK_INT IN havetemp,       \
+                                                       CCTK_REAL IN rf_precision,  \
+                                                       CCTK_INT IN npoints,        \
+                                                       CCTK_REAL IN ARRAY rho,     \
+                                                       CCTK_REAL INOUT ARRAY temp, \
+                                                       CCTK_REAL IN ARRAY ye,      \
+                                                       CCTK_REAL INOUT ARRAY eps,  \
+                                                       CCTK_REAL OUT ARRAY press,  \
+                                                       CCTK_REAL OUT ARRAY dpdrho,  \
+                                                       CCTK_REAL OUT ARRAY dpdt,  \
+                                                       CCTK_REAL OUT ARRAY dedrho,  \
+                                                       CCTK_REAL OUT ARRAY dedt,  \
+                                                       CCTK_INT OUT ARRAY keyerr,\
+                                                       CCTK_INT OUT anyerr)
+
+USES FUNCTION EOS_Omni_dpdrho_dpdt_dedrho_dedt
+
+void FUNCTION EOS_Omni_dpdrho_dpdeps_hinv(CCTK_INT IN eoskey,         \
+                                                    CCTK_REAL IN rf_precision,  \
+                                                    CCTK_INT IN npoints,        \
+                                                    CCTK_REAL IN ARRAY rho,     \
+                                                    CCTK_REAL INOUT ARRAY enth, \
+                                                    CCTK_REAL INOUT ARRAY temp, \
+                                                    CCTK_REAL IN ARRAY ye,      \
+                                                    CCTK_REAL INOUT ARRAY eps,  \
+                                                    CCTK_REAL OUT ARRAY press,  \
+                                                    CCTK_REAL OUT ARRAY dpdrho,  \
+                                                    CCTK_REAL OUT ARRAY dpdeps,  \
+                                                    CCTK_INT OUT ARRAY keyerr,\
+                                                    CCTK_INT OUT anyerr)
+
+USES FUNCTION EOS_Omni_dpdrho_dpdeps_hinv
+
+void FUNCTION EOS_Omni_press_from_rhoenthalpy(CCTK_INT IN eoskey,         \
+                                                       CCTK_INT IN havetemp,       \
+                                                       CCTK_REAL IN rf_precision,  \
+                                                       CCTK_INT IN npoints,        \
+                                                       CCTK_REAL IN ARRAY rho,     \
+                                                       CCTK_REAL INOUT ARRAY eps,  \
+                                                       CCTK_REAL INOUT ARRAY temp, \
+                                                       CCTK_REAL IN ARRAY ye,      \
+                                                       CCTK_REAL OUT ARRAY press,  \
+                                                       CCTK_REAL INOUT ARRAY enth,  \
+                                                       CCTK_INT OUT ARRAY keyerr,\
+                                                       CCTK_INT OUT anyerr)
+
+USES FUNCTION EOS_Omni_press_from_rhoenthalpy
+
+void FUNCTION EOS_Omni_dpdrho_dpdt_dedrho_dedt(CCTK_INT IN eoskey,         \
+                                                       CCTK_INT IN havetemp,       \
+                                                       CCTK_REAL IN rf_precision,  \
+                                                       CCTK_INT IN npoints,        \
+                                                       CCTK_REAL IN ARRAY rho,     \
+                                                       CCTK_REAL INOUT ARRAY temp, \
+                                                       CCTK_REAL IN ARRAY ye,      \
+                                                       CCTK_REAL INOUT ARRAY eps,  \
+                                                       CCTK_REAL OUT ARRAY press,  \
+                                                       CCTK_REAL OUT ARRAY dpdrho,  \
+                                                       CCTK_REAL OUT ARRAY dpdt,  \
+                                                       CCTK_REAL OUT ARRAY dedrho,  \
+                                                       CCTK_REAL OUT ARRAY dedt,  \
+                                                       CCTK_INT OUT ARRAY keyerr,\
+                                                       CCTK_INT OUT anyerr)
+
+USES FUNCTION EOS_Omni_dpdrho_dpdt_dedrho_dedt
+
+
+void FUNCTION EOS_Omni_Gamma(CCTK_INT IN eoskey,         \
+                                      CCTK_INT IN keytemp,         \
+                                      CCTK_REAL IN rf_precision,  \
+                                      CCTK_INT IN npoints,        \
+                                      CCTK_REAL IN ARRAY rho,     \
+                                      CCTK_REAL INOUT ARRAY temp, \
+                                      CCTK_REAL IN ARRAY ye,      \
+                                      CCTK_REAL INOUT ARRAY eps,  \
+                                      CCTK_REAL OUT ARRAY press,  \
+                                      CCTK_REAL OUT ARRAY Gamma_eff,  \
+                                      CCTK_INT OUT ARRAY keyerr,\
+                                      CCTK_INT OUT anyerr)
+
+USES FUNCTION EOS_Omni_Gamma
+
+void FUNCTION EOS_press_cold(      \
+    CCTK_REAL ARRAY IN rho,            \
+    CCTK_REAL ARRAY IN ye,             \
+    CCTK_REAL ARRAY OUT prs,           \
+    CCTK_REAL ARRAY OUT eps,           \
+    CCTK_INT  ARRAY OUT keyerr,        \
+    CCTK_INT  ARRAY OUT anyerr         \
+    )
+
+USES FUNCTION EOS_press_cold
+
+void FUNCTION EOS_Omni_press(CCTK_INT IN eoskey,         \
+                             CCTK_INT IN havetemp,       \
+                             CCTK_REAL IN rf_precision,  \
+                             CCTK_INT IN npoints,        \
+                             CCTK_REAL IN ARRAY rho,     \
+                             CCTK_REAL INOUT ARRAY eps,  \
+                             CCTK_REAL INOUT ARRAY temp, \
+                             CCTK_REAL IN ARRAY ye,      \
+                             CCTK_REAL OUT ARRAY press,  \
+                             CCTK_INT OUT ARRAY keyerr,  \
+                             CCTK_INT OUT anyerr)
+
+USES FUNCTION EOS_Omni_press
+
+void FUNCTION EOS_nuc_eos_get_lims(CCTK_REAL OUT ARRAY rho_min,   \
+                               CCTK_REAL OUT ARRAY rho_max,   \
+                               CCTK_REAL OUT ARRAY t_min,     \
+                               CCTK_REAL OUT ARRAY t_max,     \
+                               CCTK_REAL OUT ARRAY ye_min,    \
+                               CCTK_REAL OUT ARRAY ye_max,    \
+                               CCTK_REAL OUT ARRAY eps_min,   \
+                               CCTK_REAL OUT ARRAY eps_max,   \
+                               CCTK_REAL OUT ARRAY press_min, \
+                               CCTK_REAL OUT ARRAY press_max  \
+                              )
+
+USES FUNCTION EOS_nuc_eos_get_lims
+
+Protected:
+CCTK_INT c2p_eos_int_c2p type = scalar
+{
+    c2p_eos_eoskey_c2p
+    c2p_eos_keytemp_c2p
+} "Useful INTs to be shared"
+
+CCTK_REAL c2p_eos_real_c2p type = scalar
+{
+    c2p_eos_P_atmo_c2p
+    c2p_eos_T_atmo_c2p
+    c2p_eos_ye_atmo_c2p
+    c2p_eos_eps_atmo_c2p
+    c2p_eos_rho_atmo_c2p
+    c2p_eos_prec_c2p
+} "Useful REALs to be shared"

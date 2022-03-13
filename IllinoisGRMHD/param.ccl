@@ -1,0 +1,247 @@
+# Parameter definitions for thorn IllinoisGRMHD
+
+shares: ADMBase
+USES CCTK_INT lapse_timelevels
+USES CCTK_INT shift_timelevels
+USES CCTK_INT metric_timelevels
+
+#########################################################
+restricted:
+#########################################################
+# Verbosity Level
+KEYWORD verbose "Determines how much evolution information is output" STEERABLE=ALWAYS
+{
+  "no"        :: "Complete silence"
+  "essential" :: "Essential health monitoring of the GRMHD evolution: Information about conservative-to-primitive fixes, etc."
+  "essential+iteration output" :: "Outputs health monitoring information, plus a record of which RK iteration. Very useful for backtracing a crash."
+} "essential+iteration output"
+#########################################################
+
+
+BOOLEAN use_ConservativeToPrimitive "Use the ConservativeToPrimitive thorn" STEERABLE=always
+{
+} "no"
+
+
+
+#########################################################
+# SPEED LIMIT: Set maximum relativistic gamma factor
+#
+REAL GAMMA_SPEED_LIMIT "Maximum relativistic gamma factor."
+{
+ 1:* :: "Positive > 1, though you'll likely have troubles far above 10."
+} 10.0
+#########################################################
+
+#########################################################
+# CONSERV TO PRIMS PARAMETERS
+
+# FIXME: Enable this parameter! IllinoisGRMHD is currently hard-coded to tau_stildefix_enable=2.
+#INT tau_stildefix_enable "tau<0 fix in primitive_vars_hybrid2 to reduce number of Font fixes, especially in puncture+matter evolutions" STEERABLE=ALWAYS
+#{
+# 0:3 :: "zero (disable), one (enable everywhere), or two (enable only where Psi6 > Psi6threshold [i.e., inside the horizon, where B's are set to zero], or three (kludge: set B=0 if tau<0 inside horizon))"
+#} 0
+
+BOOLEAN update_Tmunu "Update Tmunu, for RHS of Einstein's equations?" STEERABLE=ALWAYS
+{
+} "yes"
+
+INT force_regrid "0: no, 1: yes" STEERABLE=ALWAYS
+{
+ 0:10 :: "a little hack to activate refinement levels using the Trigger thorn"
+} 0
+
+############################
+# Limiters on tau and rho_b:
+REAL tau_atm "Floor value on the energy variable tau (cf. tau_stildefix_enable). Given the variety of systems this code may encounter, there *is no reasonable default*. Effectively the current (enormous) value should disable the tau_atm floor. Please set this in your initial data thorn, and reset at will during evolutions." STEERABLE=ALWAYS
+{
+ -1:* :: "Positive"
+} 1e100
+
+REAL rho_b_atm "Floor value on the baryonic rest mass density rho_b (atmosphere). Given the variety of systems this code may encounter, there *is no reasonable default*. Your run will die unless you override this default value in your initial data thorn." STEERABLE=ALWAYS
+{
+ *:* :: "Allow for negative values.  This enables us to debug the code and verify if rho_b_atm is properly set."
+} 1e200
+
+REAL rho_b_max "Ceiling value on the baryonic rest mass density rho_b. The enormous value effectively disables this ceiling by default. It can be quite useful after a black hole has accreted a lot of mass, leading to enormous densities inside the BH. To enable this trick, set rho_b_max in your initial data thorn! You are welcome to change this parameter mid-run (after restarting from a checkpoint)." STEERABLE=ALWAYS
+{
+ 0:* :: "Note that you will have problems unless rho_b_atm<rho_b_max"
+} 1e300
+############################
+
+INT conserv_to_prims_debug "0: no, 1: yes" STEERABLE=ALWAYS
+{
+ 0:1 :: "zero (no) or one (yes)"
+} 0
+
+REAL Psi6threshold "Where Psi^6 > Psi6threshold, we assume we're inside the horizon in the primitives solver, and certain limits are relaxed or imposed" STEERABLE=ALWAYS
+{
+ *:* :: "Can set to anything"
+} 1e100
+#########################################################
+
+#########################################################
+# EQUATION OF STATE PARAMS, LOOK FOR MORE IN interface.ccl!
+INT neos "number of parameters in EOS table. If you want to increase from the default max value, you MUST also set eos_params_arrays1 and eos_params_arrays2 in interface.ccl to be consistent!"
+{
+ 1:10 :: "Any integer between 1 and 10"
+} 1
+
+REAL gamma_th "thermal gamma parameter"
+{
+ 0:* :: "Physical values"
+-1   :: "forbidden value to make sure it is explicitly set in the parfile"
+} -1
+
+REAL K_poly "initial polytropic constant"
+{
+ 0:* :: "Positive"
+} 1.0
+#########################################################
+
+#########################################################
+# OUTER BOUNDARY CONDITION CHOICE
+KEYWORD Matter_BC "Chosen Matter boundary condition"
+{
+  "outflow" :: "Outflow boundary conditions"
+  "frozen"  :: "Frozen boundaries"
+} "outflow"
+
+KEYWORD EM_BC "EM field boundary condition"
+{
+  "copy"    :: "Copy data from nearest boundary point"
+  "frozen"  :: "Frozen boundaries"
+} "copy"
+#########################################################
+
+
+#########################################################
+# SYMMETRY BOUNDARY PARAMS. Needed for handling staggered gridfunctions.
+KEYWORD Symmetry "Currently only no symmetry supported, though work has begun in adding equatorial-symmetry support. FIXME: Extend ET symmetry interface to support symmetries on staggered gridfunctions"
+{
+  ""       :: "no symmetry, full 3d domain"
+} "none"
+
+REAL Sym_Bz "In-progress equatorial symmetry support: Symmetry parameter across z axis for magnetic fields = +/- 1"
+{
+ -1.0:1.0 :: "Set to +1 or -1."
+} 1.0
+#########################################################
+
+###############################################################################################
+private:
+
+#########################################################
+# EVOLUTION PARAMS
+REAL damp_lorenz "Damping factor for the generalized Lorenz gauge. Has units of 1/length = 1/M. Typically set this parameter to 1.5/(maximum Delta t on AMR grids)." STEERABLE=ALWAYS
+{
+ *:* :: "any real"
+} 0.0
+
+#########################################################
+# C2P PARAMETERS
+#KEYWORD c2p_EOS_type "Specify which type of Equation Of State" STEERABLE=always
+#{
+# "2D_Polytrope"         :: "Polytropic EOS, P = K rho^Gamma"
+# "Ideal_Fluid"          :: "Gamma Law, P = eps * rho * (Gamma - 1)"
+# "Hybrid"               :: "Piecewise Polytropic + Gamma law"
+# "nuc_eos"              :: "Tabulated general EOS"
+# "cold_tabulated"       :: "Cold tabulated EOS + Gamma law"
+# "barotropic_tabulated" :: "Barotropic tabulated EOS + Gamma law"
+# "ideal_gas"            :: "Clapeyron's ideal gas law - mostly for comparison with Siegel et al."
+#} "2D_Polytrope"
+#
+#BOOLEAN c2p_excise "Excise ??????" STEERABLE=always
+#{
+#} "no"
+#
+#BOOLEAN c2p_grace "Grace ??????" STEERABLE=always
+#{
+#} "no"
+#
+#
+#BOOLEAN c2p_rhoT_key "Hot equation of state"
+#{
+#} "no"
+#
+#BOOLEAN c2p_use_eps_atmo "Force atmosphere value of energy density" STEERABLE=always
+#{
+#} "no"
+#
+#KEYWORD c2p_preferred_algorithm "Specify which algorithm to use" STEERABLE=always
+#{
+#    "NR_3DE"      :: "3D Newton-Raphson based on Cerdá-Durán 2008 with eps"
+#    "NR_3DP"      :: "3D Newton-Raphson based on Cerdá-Durán 2008 with P"
+#    "NR_2DR"      :: "2D Newton-Raphson based on Cerdá-Durán 2008 with rho"
+#    "NR_2DW"      :: "2D Newton-Raphson based on Cerdá-Durán 2008 with W"
+#    "palenzuela"  :: "Palenzuela"
+#    "NR_2D_Noble" :: "Noble"
+#    "Newman"      :: "Newman"
+#    "HARM"        :: "HARM"
+#    "auto"        :: "let the code decide"
+#} "Newman"
+#
+#CCTK_INT c2p_max_iterations "How many iteration in the scheme"  STEERABLE=always
+#{
+#    1: :: "At least a few"
+#} 300
+#
+#CCTK_INT c2p_extra_iterations "How many extra iteration in the scheme"  STEERABLE=always
+#{
+#    0: :: ""
+#} 0
+#
+#CCTK_REAL c2p_tolerance "Which tolerance in the scheme" STEERABLE=always{
+#    0:* :: "A small (but not too small) value"
+#} 5e-9
+#
+#BOOLEAN c2p_use_backup_scheme "Use a backup scheme in case first fails?" STEERABLE=always
+#{
+#} "no"
+#
+#CCTK_REAL c2p_tolerance_retry "Which tolerance in the scheme if the first attempt failed" STEERABLE=always{
+#    0:* :: "A small (but not too small) value"
+#} 5e-7
+#
+#KEYWORD c2p_algorithm_retry "Specify which algorithm to use" STEERABLE=always
+#{
+#    "NR_3DE"      :: "3D Newton-Raphson based on Cerdá-Durán 2008 with eps"
+#    "NR_3DP"      :: "3D Newton-Raphson based on Cerdá-Durán 2008 with P"
+#    "NR_2DR"      :: "2D Newton-Raphson based on Cerdá-Durán 2008 with rho"
+#    "NR_2DW"      :: "2D Newton-Raphson based on Cerdá-Durán 2008 with W"
+#    "palenzuela"  :: "Palenzuela"
+#    "NR_2D_Noble" :: "Noble"
+#    "Newman"      :: "Newman"
+#    "HARM"        :: "HARM"
+#    "auto"        :: "let the code decide"
+#} "palenzuela"
+#
+#BOOLEAN c2p_enforce_v2_smaller_than_1 "Enforce v2 < 1" STEERABLE=always
+#{
+#} "yes"
+#
+## Atmospheric properties
+#
+#CCTK_REAL c2p_rho_atmo "Rest mass density of the atmosphere" STEERABLE=always {
+#    0:* :: "A small (but not too small) value"
+#} 5e-15
+#
+#CCTK_REAL c2p_eps_atmo "Rest mass density of the atmosphere" STEERABLE=always {
+#    -1.0:* :: "A small (but not too small) value"
+#} 5e-15
+#
+#CCTK_REAL c2p_rho_atmo_tolerance "Tolerance in finding the atmosphere" STEERABLE=always {
+#    0:* :: "A small (but not too small) value"
+#} 0.01
+#
+#CCTK_REAL c2p_T_atmo "Temperature of the atmosphere" STEERABLE=always {
+#    0:* :: "A value in MeV correspoinding to cold matter"
+#} 0.1
+#
+#CCTK_REAL c2p_ye_atmo "Electron fraction of the atmosphere" STEERABLE=always {
+#    0:* :: "A reasonable value"
+#} 0.01
+#
+#BOOLEAN c2p_retain_B_atmo "Keep the magnetic field in the atmosphere?" STEERABLE=always
+#{
+#} "no"

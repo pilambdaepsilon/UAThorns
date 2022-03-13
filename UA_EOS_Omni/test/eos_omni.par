@@ -1,0 +1,14 @@
+ActiveThorns = "eos_omni IOUtil PUGH"
+
+EOS_Omni::nuceos_read_table = yes
+EOS_Omni::nuceos_table_name =  "../../../arrangements/EinsteinEOS/EOS_Omni/test/TEST_TABLEEOS_rho4_temp4_ye4_version1.0_20120514.h5" #$ENV{'EOS_TABLE_PATH'}/TEST_TABLEEOS_rho4_temp4_ye4_version1.0_20120514.h5
+EOS_Omni::dump_nuceos_table = yes
+EOS_Omni::dump_nuceos_table_name = "TEST_TABLEEOS_rho4_temp4_ye4_version1.0_20120514.asc"
+
+EOS_Omni::read_table_on_single_process = yes
+EOS_Omni::reader_process = 1
+
+IO::out_dir			= $parfile
+
+#IOASCII::out1D_every = 1
+#IOASCII::out1D_vars  = ""

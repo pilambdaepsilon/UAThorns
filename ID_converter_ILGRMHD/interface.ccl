@@ -1,0 +1,50 @@
+# Interface definition for thorn ID_converter_ILGRMHD
+
+implements: ID_converter_ILGRMHD
+
+inherits: ADMBase, Boundary, SpaceMask, Tmunubase, HydroBase, grid, IllinoisGRMHD
+
+uses include header: IllinoisGRMHD_headers.h
+USES INCLUDE: Symmetry.h
+
+friend: ConservativeToPrimitive
+
+void FUNCTION EOS_Omni_press(CCTK_INT IN eoskey,         \
+                             CCTK_INT IN havetemp,       \
+                             CCTK_REAL IN rf_precision,  \
+                             CCTK_INT IN npoints,        \
+                             CCTK_REAL IN ARRAY rho,     \
+                             CCTK_REAL INOUT ARRAY eps,  \
+                             CCTK_REAL INOUT ARRAY temp, \
+                             CCTK_REAL IN ARRAY ye,      \
+                             CCTK_REAL OUT ARRAY press,  \
+                             CCTK_INT OUT ARRAY keyerr,  \
+                             CCTK_INT OUT anyerr)
+
+USES FUNCTION EOS_Omni_press
+
+void FUNCTION EOS_press_cold(      \
+    CCTK_REAL ARRAY IN  rho,           \
+    CCTK_REAL ARRAY IN ye,             \
+    CCTK_REAL ARRAY OUT prs,           \
+    CCTK_REAL ARRAY OUT eps,           \
+    CCTK_INT  ARRAY OUT keyerr,        \
+    CCTK_INT  ARRAY OUT anyerr         \
+)
+
+USES FUNCTION EOS_press_cold
+
+void FUNCTION EOS_Omni_press_from_rhoenthalpy(CCTK_INT IN eoskey,         \
+                                                       CCTK_INT IN havetemp,       \
+                                                       CCTK_REAL IN rf_precision,  \
+                                                       CCTK_INT IN npoints,        \
+                                                       CCTK_REAL IN ARRAY rho,     \
+                                                       CCTK_REAL INOUT ARRAY eps,  \
+                                                       CCTK_REAL INOUT ARRAY temp, \
+                                                       CCTK_REAL IN ARRAY ye,      \
+                                                       CCTK_REAL OUT ARRAY press,  \
+                                                       CCTK_REAL INOUT ARRAY enth,  \
+                                                       CCTK_INT OUT ARRAY keyerr,\
+                                                       CCTK_INT OUT anyerr)
+
+USES FUNCTION EOS_Omni_press_from_rhoenthalpy

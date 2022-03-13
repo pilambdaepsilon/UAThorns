@@ -1,0 +1,7 @@
+schedule prepare_c2p AT CCTK_BASEGRID AFTER EOS_OMNI_get_energy_shift
+{
+  LANG: C
+  OPTIONS: global
+  STORAGE: c2p_eos_int
+  STORAGE: c2p_eos_real
+} "Initialize the EOS"
