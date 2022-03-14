@@ -1,4 +1,0 @@
-TEST magnetizedTOV
-{ 
-  RELTOL 1e-11
-} 
