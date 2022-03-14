@@ -94,11 +94,6 @@ void calc_prim(const double x, const double * con, const double * param, const d
      prim[MU_HAT]   = 0.0;
 //     prim[MU_HAT]   = fmin(xmuhatS, 300);
   }
-  else{
-     prim[ENT]      = 1.0;
-     prim[MU_HAT]   = 0.0;
-  }
-
   double cBsqr=B_squared; double cS = BdotS; double cVsqr = 1.- 1./(W*W);
 
 }

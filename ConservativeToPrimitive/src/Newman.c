@@ -202,10 +202,6 @@ void newman(struct c2p_report * c2p_rep, const double S_squared,
   prim[ENT]      = xentS;
   prim[MU_HAT]   = 0.0;
   }
-  else{
-     prim[ENT]      = 1.0;
-     prim[MU_HAT]      = 0.0;
-  }
 
   c2p_rep->count = step;
   if (step >= maxsteps) c2p_rep->failed = true;

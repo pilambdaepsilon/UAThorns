@@ -583,11 +583,6 @@ void calc_prim_noble(const double S_squared, const double BdotS,
      prim[MU_HAT]   = 0.0;
 //     prim[MU_HAT]   = fmin(xmuhatS, 300);
   }
-  else{
-     prim[ENT]      = 1.0;
-     prim[MU_HAT]   = 0.0;
-  }
-
 }
 
 /**********************************************************************
