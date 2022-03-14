@@ -1,0 +1,15 @@
+# Main make.code.defn file for thorn IllinoisGRMHD
+
+# Source files in this directory include prepare_c2p.c at top level if you want the C2P_appendage
+SRCS =  InitSymBound.C MoL_registration.C \
+    \
+    postpostinitial__set_symmetries__copy_timelevels.C \
+    \
+    convert_ADM_to_BSSN__enforce_detgtij_eq_1__and_compute_gtupij.C \
+    \
+    driver_evaluate_MHD_rhs.C \
+    compute_B_and_Bstagger_from_A.C \
+    driver_conserv_to_prims.C \
+    symmetry__set_gzs_staggered_gfs.C \
+    \
+    outer_boundaries.C

@@ -1,0 +1,7 @@
+Check that conservs & primitives are consistent at beginning of
+driver_evaluate_MHD_rhs.C
+
+Check that gij and Aij constraints have been applied at beginning of
+driver_conserv_to_prims.C and driver_evaluate_MHD_rhs.C.
+
+Check that phi & psi are consistent at beginning of compute_B_and_Bstagger.C
