@@ -1,0 +1,418 @@
+# This file was automatically generated using the GetComponents script.
+
+!CRL_VERSION = 1.0
+
+
+# Component list: minimal.th
+
+
+!DEFINE ROOT = Cactus
+!DEFINE ARR  = $ROOT/arrangements
+!DEFINE COMPONENTLIST_TARGET = $ROOT/thornlists/
+
+!DEFINE ET_RELEASE = ET_2019_03
+
+
+# This thorn list
+!TARGET   = $ROOT
+!TYPE     = git
+!URL      = https://bitbucket.org/einsteintoolkit/manifest.git
+!REPO_BRANCH = $ET_RELEASE
+!REPO_PATH= $1
+!NAME     = manifest
+!CHECKOUT = ./manifest
+
+
+# Cactus Flesh
+!TARGET   = $ROOT
+!TYPE     = git
+!URL      = https://bitbucket.org/cactuscode/cactus.git
+!REPO_BRANCH = $ET_RELEASE
+!NAME     = flesh
+!CHECKOUT = .clang-format CONTRIBUTORS COPYRIGHT doc lib Makefile src
+
+
+# Simulation Factory
+!TARGET   = $ROOT
+!TYPE     = git
+!URL      = https://bitbucket.org/simfactory/simfactory2.git
+!REPO_BRANCH = $ET_RELEASE
+!REPO_PATH=$1
+!NAME     = simfactory2
+!CHECKOUT = ./simfactory
+
+# Various Cactus utilities
+!TARGET   = $ROOT
+!TYPE     = git
+!URL      = https://bitbucket.org/cactuscode/utilities.git
+!REPO_PATH= $1
+!NAME     = utils
+!REPO_BRANCH = $ET_RELEASE
+!CHECKOUT = ./utils
+
+# The GetComponents script
+!TARGET   = $ROOT/bin
+!TYPE     = git
+!URL      = https://github.com/gridaphobe/CRL.git
+!REPO_BRANCH = $ET_RELEASE
+!CHECKOUT = GetComponents
+
+
+
+# CactusBase thorns
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://bitbucket.org/cactuscode/cactusbase.git
+!REPO_BRANCH = $ET_RELEASE
+!REPO_PATH= $2
+!CHECKOUT =
+CactusBase/Boundary
+CactusBase/CartGrid3D
+CactusBase/CoordBase
+CactusBase/Fortran
+CactusBase/InitBase
+CactusBase/IOASCII
+CactusBase/IOBasic
+CactusBase/IOUtil
+CactusBase/SymBase
+CactusBase/Time
+
+# CactusNumerical thorns
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://bitbucket.org/cactuscode/cactusnumerical.git
+!REPO_BRANCH = $ET_RELEASE
+!REPO_PATH= $2
+!CHECKOUT =
+CactusNumerical/Dissipation
+CactusNumerical/InterpToArray
+CactusNumerical/LocalInterp
+CactusNumerical/LocalInterp2
+CactusNumerical/LocalReduce
+CactusNumerical/MoL
+CactusNumerical/Noise
+CactusNumerical/Norms
+CactusNumerical/Periodic
+CactusNumerical/ReflectionSymmetry
+CactusNumerical/RotatingSymmetry180
+CactusNumerical/Slab
+CactusNumerical/SpaceMask
+CactusNumerical/SphericalSurface
+CactusNumerical/SummationByParts
+CactusNumerical/TensorTypes
+
+# CactusUtils thorns
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://bitbucket.org/cactuscode/cactusutils.git
+!REPO_BRANCH = $ET_RELEASE
+!REPO_PATH= $2
+!CHECKOUT =
+CactusUtils/MemSpeed
+CactusUtils/NaNCatcher
+CactusUtils/NaNChecker
+CactusUtils/SystemStatistics
+CactusUtils/SystemTopology
+CactusUtils/TerminationTrigger
+CactusUtils/TimerReport
+CactusUtils/Trigger
+CactusUtils/Vectors
+#CactusUtils/Formaline
+
+# EinsteinAnalysis
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://bitbucket.org/einsteintoolkit/einsteinanalysis.git
+!REPO_PATH= $2
+!REPO_BRANCH = $ET_RELEASE
+!CHECKOUT =
+EinsteinAnalysis/ADMAnalysis
+EinsteinAnalysis/ADMMass
+EinsteinAnalysis/AHFinderDirect
+EinsteinAnalysis/CalcK
+EinsteinAnalysis/Extract
+EinsteinAnalysis/Multipole
+EinsteinAnalysis/Outflow
+EinsteinAnalysis/PunctureTracker
+EinsteinAnalysis/Hydro_Analysis
+EinsteinAnalysis/QuasiLocalMeasures
+EinsteinAnalysis/WeylScal4
+
+
+# EinsteinBase
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://bitbucket.org/einsteintoolkit/einsteinbase.git
+!REPO_PATH= $2
+!REPO_BRANCH = $ET_RELEASE
+!CHECKOUT =
+EinsteinBase/ADMBase
+EinsteinBase/ADMCoupling        # deprecated
+EinsteinBase/ADMMacros          # deprecated
+EinsteinBase/Constants
+EinsteinBase/CoordGauge
+EinsteinBase/EOS_Base
+EinsteinBase/HydroBase
+EinsteinBase/StaticConformal
+EinsteinBase/TmunuBase
+
+# EinsteinEOS
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://bitbucket.org/einsteintoolkit/einsteineos.git
+!REPO_PATH= $2
+#CHECKOUT =
+#EinsteinEOS/EOS_Omni
+
+# EinsteinInitialData
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://bitbucket.org/einsteintoolkit/einsteininitialdata.git
+!REPO_PATH= $2
+!REPO_BRANCH = $ET_RELEASE
+!CHECKOUT =
+EinsteinInitialData/TOVSolver
+#EinsteinInitialData/TOVSolverHot
+#EinsteinInitialData/Hydro_RNSID
+# EinsteinInitialData/TwoPunctures
+#EinsteinInitialData/Meudon_Bin_BH
+EinsteinInitialData/Meudon_Bin_NS
+#EinsteinInitialData/Meudon_Mag_NS
+
+# EinsteinUtils
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://bitbucket.org/einsteintoolkit/einsteinutils.git
+!REPO_PATH= $2
+!REPO_BRANCH = $ET_RELEASE
+!CHECKOUT =
+EinsteinUtils/SetMask_SphericalSurface
+EinsteinUtils/TGRtensor #(required by QuasiLocalMeasures)
+
+# Carpet, the AMR driver
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://bitbucket.org/eschnett/carpet.git
+!REPO_PATH= $2
+!REPO_BRANCH = $ET_RELEASE
+!CHECKOUT =
+Carpet/Carpet
+Carpet/CarpetEvolutionMask
+Carpet/CarpetIOASCII
+Carpet/CarpetIOBasic
+Carpet/CarpetIOHDF5
+Carpet/CarpetIOScalar
+Carpet/CarpetInterp
+Carpet/CarpetInterp2
+Carpet/CarpetLib
+Carpet/CarpetMask
+Carpet/CarpetReduce
+Carpet/CarpetRegrid
+Carpet/CarpetRegrid2
+Carpet/CarpetSlab
+Carpet/CarpetTracker
+Carpet/CycleClock
+Carpet/LoopControl
+Carpet/Timers
+
+# Additional Cactus thorns
+!TARGET   = $ARR
+!TYPE     = svn
+!URL      = https://github.com/EinsteinToolkit/$1-$2.git/trunk
+!REPO_BRANCH = $ET_RELEASE
+!CHECKOUT =
+ExternalLibraries/BLAS
+ExternalLibraries/FFTW3
+ExternalLibraries/GSL
+ExternalLibraries/HDF5
+ExternalLibraries/hwloc
+ExternalLibraries/LAPACK
+ExternalLibraries/libjpeg
+ExternalLibraries/LORENE2
+ExternalLibraries/MPI
+#ExternalLibraries/OpenBLAS
+ExternalLibraries/zlib
+#ExternalLibraries/cocal
+#ExternalLibraries/OpenSSL
+ExternalLibraries/pthreads
+
+# From Kranc (required e.g. by McLachlan)
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://github.com/ianhinder/Kranc.git
+!REPO_PATH= Auxiliary/Cactus
+!REPO_BRANCH = $ET_RELEASE
+!CHECKOUT =
+KrancNumericalTools/GenericFD
+
+
+# McLachlan, the spacetime code
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://bitbucket.org/einsteintoolkit/mclachlan.git
+!REPO_PATH= $2
+!REPO_BRANCH = $ET_RELEASE
+!CHECKOUT =
+McLachlan/ML_ADMConstraints
+McLachlan/ML_ADMQuantities
+McLachlan/ML_BSSN
+McLachlan/ML_BSSN_Helper
+
+# # CactusConnect thorns
+# !TARGET   = $ARR
+# !TYPE     = git
+# !URL      = https://bitbucket.org/cactuscode/cactusconnect.git
+# !REPO_PATH= $2
+# !REPO_BRANCH = $ET_RELEASE
+# !CHECKOUT =
+# CactusConnect/HTTPD
+# CactusConnect/HTTPDExtra
+# CactusConnect/Socket
+
+# EinsteinEvolve
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://bitbucket.org/einsteintoolkit/einsteinevolve.git
+!REPO_PATH= $2
+!REPO_BRANCH = $ET_RELEASE
+!CHECKOUT =
+EinsteinEvolve/GRHydro
+EinsteinEvolve/GRHydro_InitData
+EinsteinEvolve/NewRad
+
+
+# Numerical
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://bitbucket.org/cactuscode/numerical.git
+!REPO_PATH= $2
+!REPO_BRANCH = $ET_RELEASE
+!CHECKOUT =
+Numerical/AEILocalInterp
+
+# Various thorns from WVU
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://bitbucket.org/zach_etienne/wvuthorns.git
+!REPO_PATH= $2
+!REPO_BRANCH = $ET_RELEASE
+!CHECKOUT =
+WVUThorns/Convert_to_HydroBase
+WVUThorns/Seed_Magnetic_Fields
+#WVUThorns/IllinoisGRMHD
+#WVUThorns/ID_converter_ILGRMHD
+
+# Various "diagnostic" thorns from WVU:
+#    particle_tracerET
+#    smallbPoynET
+#    VolumeIntegrals_GRMHD
+#    VolumeIntegrals_vacuum
+# ... and a thorn for seeding binary neutron stars with
+#     magnetic fields:
+#    Seed_Magnetic_Fields_BNS
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://bitbucket.org/zach_etienne/wvuthorns_diagnostics.git
+!REPO_BRANCH = $ET_RELEASE
+!REPO_PATH= $2
+!CHECKOUT =
+WVUThorns_Diagnostics/particle_tracerET
+WVUThorns_Diagnostics/Seed_Magnetic_Fields_BNS
+WVUThorns_Diagnostics/smallbPoynET
+WVUThorns_Diagnostics/VolumeIntegrals_GRMHD
+WVUThorns_Diagnostics/VolumeIntegrals_vacuum
+
+# The UA Thorns
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://Sbozzolo@bitbucket.org/Sbozzolo/uathorns.git
+!REPO_PATH= $2
+!CHECKOUT =
+UAThorns/ID_converter_ILGRMHD
+UAThorns/IllinoisGRMHD
+UAThorns/UA_EOS_Omni
+UAThorns/ConservativeToPrimitive
+
+#LSUThorns
+!TARGET   = $ARR
+!TYPE     = svn
+!URL      = https://svn.cct.lsu.edu/repos/numrel/$1/$2/trunk
+!CHECKOUT =
+LSUThorns/NSTracker
+
+#Spriiiitz
+!TARGET   = $ARR
+!TYPE     = ignore
+!CHECKOUT =
+#SpritzCode/ID_NrotStar  
+#SpritzCode/Recovery_Util  
+#SpritzCode/Spritz  
+#SpritzCode/Spritz_InitData  
+#SpritzCode/Spritz_SetBeta  
+#SpritzCode/ZelmaniLeak
+
+## Boost
+#!TARGET   = $ARR
+#!TYPE     = git
+#!URL      = https://github.com/dradice/Boost.git
+#!REPO_PATH= ../$2
+#!CHECKOUT =
+#LocalThorns/Boost
+#
+## Refluxing
+#!TARGET   = $ARR
+#!TYPE     = git
+#!URL      = https://bitbucket.org/dradice/refluxing.git
+#!REPO_PATH= ../../arrangements/$1/../../repos/refluxing
+#!CHECKOUT = 
+#LocalThorns/Refluxing
+
+## THCBase
+#!TARGET   = $ARR
+#!TYPE     = git
+#!URL      = https://bitbucket.org/FreeTHC/thcbase.git
+#!REPO_PATH= $2
+#!CHECKOUT =
+#THCBase/CPPUtils
+#THCBase/FDCore
+#THCBase/HRSCCore
+#
+## THCCore
+#!TARGET   = $ARR
+#!TYPE     = git
+#!URL      = https://bitbucket.org/FreeTHC/thccore.git
+#!REPO_PATH= $2
+#!CHECKOUT =
+#THCCore/THC_Boundary
+#THCCore/THC_Core
+#THCCore/THC_HydroExcision
+#THCCore/THC_InitialData
+#THCCore/THC_LeakageBase
+#THCCore/THC_LeakageM0
+#THCCore/THC_Refluxing
+#THCCore/THC_Test
+#THCCore/THC_Tracer
+#
+## THCExtra
+#!TARGET   = $ARR
+#!TYPE     = git
+#!URL      = https://bitbucket.org/FreeTHC/thcextra.git
+#!REPO_PATH= $2
+#!CHECKOUT =
+#THCExtra/BNSAnalysis
+#THCExtra/BNSTrackerGen
+#THCExtra/Composition
+#THCExtra/EOS_Barotropic
+#THCExtra/EOS_Thermal
+#THCExtra/EOS_Thermal_Extable
+#THCExtra/EOS_Thermal_Hybrid
+#THCExtra/EOS_Thermal_Idealgas
+#THCExtra/EOS_Thermal_Table3d
+#THCExtra/FakeRates
+#THCExtra/ID_Switch_EOS
+#THCExtra/LoreneID
+#THCExtra/PizzaBase
+#THCExtra/PizzaIDBase
+#THCExtra/PizzaNumUtils
+#THCExtra/PizzaTOV
+##THCExtra/WeakRates
