@@ -1,0 +1,572 @@
+# Carpet parameter file for binary Neutron star system
+#
+
+#------------------------------------------------------------------------------
+# Cactus parameters:
+#------------------------------------------------------------------------------
+Cactus::terminate       = "time"
+Cactus::cctk_final_time = 99999999.0
+#Cactus::cctk_itlast = 0
+
+#------------------------------------------------------------------------------
+# Activate all necessary thorns:
+#------------------------------------------------------------------------------
+
+ActiveThorns = "Boundary CartGrid3D CoordBase Fortran InitBase IOUtil LocalReduce Time"
+ActiveThorns = "AEILocalInterp LocalInterp"
+ActiveThorns = "MoL SpaceMask SphericalSurface SymBase"
+ActiveThorns = "Carpet CarpetInterp CarpetInterp2 CarpetIOASCII CarpetIOHDF5 CarpetIOScalar CarpetLib CarpetIOBasic CarpetReduce CarpetRegrid2 CarpetMask LoopControl CarpetEvolutionMask"
+#ActiveThorns = "Formaline"
+#ActiveThorns = "HTTPD Socket"
+ActiveThorns = "NaNChecker TerminationTrigger"
+#TimerReport"
+ActiveThorns = "ADMbase ADMcoupling ADMmacros CoordGauge StaticConformal"
+#ActiveThorns = "RotatingSymmetry180 ReflectionSymmetry"
+ActiveThorns = "Constants TmunuBase HydroBase "
+ActiveThorns = "UA_EOS_Omni"
+ActiveThorns = "SummationByParts"
+ActiveThorns = "GenericFD NewRad"
+ActiveThorns = "ML_BSSN ML_BSSN_Helper ML_ADMConstraints"
+ActiveThorns = "Dissipation"
+ActiveThorns = "SystemStatistics"
+
+#------------------------------------------------------------------------------
+# Utility parameters:
+#------------------------------------------------------------------------------
+
+NaNChecker::check_every    =  96 # twice for every_coarse
+NaNChecker::check_vars = "ADMBase::curv ADMBase::metric ADMBase::lapse ADMBase::shift"
+NaNChecker::action_if_found   =  "terminate"
+
+#------------------------------------------------------------------------------
+# Run parameters:
+#------------------------------------------------------------------------------
+
+#------
+# Grid:
+#------
+
+MoL::ODE_Method             = "rk4"
+MoL::MoL_Intermediate_Steps = 4
+MoL::MoL_Num_Scratch_Levels = 1
+Time::dtfac = 0.5
+
+
+
+ActiveThorns = "CoordBase"
+
+CoordBase::domainsize = "minmax"
+
+CoordBase::xmin = -384.0
+CoordBase::ymin = -384.0
+CoordBase::zmin = -384.0
+CoordBase::xmax =  384.0
+CoordBase::ymax =  384.0
+CoordBase::zmax =  384.0
+CoordBase::dx   =  6.678260869565217
+CoordBase::dy   =  6.678260869565217
+CoordBase::dz   =  6.678260869565217
+#CoordBase::dx   =  19.2
+#CoordBase::dy   =  19.2
+#CoordBase::dz   =  19.2
+#potato
+#CoordBase::dx   =   66.0
+#CoordBase::dy   =   66.0
+#CoordBase::dz   =   66.0
+
+CoordBase::boundary_size_x_lower     = 3
+CoordBase::boundary_size_y_lower     = 3
+CoordBase::boundary_size_z_lower     = 3
+CoordBase::boundary_size_x_upper     = 3
+CoordBase::boundary_size_y_upper     = 3
+CoordBase::boundary_size_z_upper     = 3
+
+CoordBase::boundary_shiftout_x_lower = 1
+CoordBase::boundary_shiftout_y_lower = 0
+CoordBase::boundary_shiftout_z_lower = 1
+
+CartGrid3D::type = "coordbase"
+Carpet::domain_from_coordbase = "yes"
+
+Driver::ghost_size                      = 3
+
+
+# General Carpet parameters:
+Carpet::enable_all_storage       = "no"
+Carpet::use_buffer_zones         = "yes"
+Carpet::schedule_barriers        = "no"
+Carpet::timer_file 	          = "carpet-timing-statistics"
+
+Carpet::poison_new_timelevels    = "yes"
+Carpet::check_for_poison         = "no"
+
+Carpet::init_3_timelevels        = "no"
+Carpet::init_fill_timelevels     = "yes"
+
+CarpetLib::poison_new_memory         = "yes"
+CarpetLib::poison_value              = 114
+CarpetLib::check_bboxes              = "no"
+CarpetLib::interleave_communications = "yes"
+CarpetLib::combine_sends             = "yes"
+
+CarpetInterp::tree_search = "yes"
+CarpetInterp::check_tree_search = "no"
+
+CarpetRegrid2::freeze_unaligned_levels = "yes"
+CarpetRegrid2::freeze_unaligned_parent_levels = "yes"
+CarpetRegrid2::ensure_proper_nesting   = "yes"
+CarpetRegrid2::snap_to_coarse          = "yes"
+
+# System specific Carpet parameters:
+Carpet::max_refinement_levels    = 9
+Carpet::prolongation_order_space = 5
+Carpet::prolongation_order_time  = 2
+Carpet::refinement_centering     = "vertex"
+
+CarpetRegrid2::regrid_every = -1
+CarpetRegrid2::num_centres  = 1
+
+CarpetRegrid2::num_levels_1 = 7
+
+CarpetRegrid2::radius_1[1]  = 224.0
+CarpetRegrid2::radius_1[2]  = 112.0
+CarpetRegrid2::radius_1[3]  = 56.0
+CarpetRegrid2::radius_1[4]  = 28.0
+CarpetRegrid2::radius_1[5]  = 14.0
+CarpetRegrid2::radius_1[6]  = 7.0
+
+CarpetMask::excluded_surface       [0] = 0
+CarpetMask::excluded_surface_factor[0] = 1.0
+
+
+
+
+#------
+# MODEL:
+#------
+
+ActiveThorns = "Meudon_Bin_NS"
+HydroBase::initial_hydro         = "Meudon_Bin_NS"
+ADMBase::initial_data            = "Meudon_Bin_NS"
+ADMBase::initial_lapse           = "Meudon_Bin_NS"
+ADMBase::initial_shift           = "zero"
+ADMBase::initial_dtlapse         = "Meudon_Bin_NS"
+ADMBase::initial_dtshift         = "zero"
+
+#Meudon_Bin_NS::filename = "ID/GW170817_LS220_q1_compose.resu"
+Meudon_Bin_NS::filename = "ID/LS220_I1p64_45km_MEDRES.resu"
+Meudon_Bin_NS::eos_table = "nuc_eos"
+Meudon_Bin_NS::eos_table_filepath = "EOS/"
+Meudon_Bin_NS::recalculate_eps  = "yes" 
+Meudon_Bin_NS::eos_precision = 1.e-8
+Meudon_Bin_NS::beta_file ="EOS/Yebeq_LORENE.LS220"
+Meudon_Bin_NS::init_real ="yes"
+
+
+#========== UA_EOS_Omni =============
+UA_EOS_Omni::nuceos_read_table = yes
+UA_EOS_Omni::nuceos_table_name = "EOS/LS220_234r_136t_50y_analmu_20091212_SVNr26.h5" 
+UA_EOS_Omni::dump_nuceos_table = no
+UA_EOS_Omni::read_table_on_single_process = yes
+UA_EOS_Omni::reader_process = 0
+
+#----------
+# Numerics:
+#----------
+
+InitBase::initial_data_setup_method = "init_some_levels"
+
+TmunuBase::stress_energy_storage = "yes"
+TmunuBase::stress_energy_at_RHS  = "yes"
+TmunuBase::timelevels            =  1
+TmunuBase::prolongation_type     = "none"
+TmunuBase::support_old_CalcTmunu_mechanism = "no"
+
+HydroBase::timelevels            = 3
+
+SpaceMask::use_mask      = "yes"
+
+SphericalSurface::nsurfaces = 5
+SphericalSurface::maxntheta = 39
+SphericalSurface::maxnphi = 76
+
+
+#SF 2 is for central grid where stars will merge
+
+SphericalSurface::ntheta      [1] = 39
+SphericalSurface::nphi        [1] = 76
+SphericalSurface::nghoststheta[1] = 2
+SphericalSurface::nghostsphi  [1] = 2
+SphericalSurface::set_spherical[1] = yes
+SphericalSurface::radius       [1] = 150
+SphericalSurface::name         [1] = "waveextract surface at 150"
+
+SphericalSurface::ntheta       [2] = 39
+SphericalSurface::nphi         [2] = 76
+SphericalSurface::nghoststheta [2] = 2
+SphericalSurface::nghostsphi   [2] = 2
+SphericalSurface::set_spherical[2] = yes
+SphericalSurface::radius       [2] = 300
+SphericalSurface::name         [2] = "waveextract surface at 300"
+
+#-----------------------------
+# Evolution:
+#-----------------------------
+
+#===== USING ILGRMHD =======
+ActiveThorns = "IllinoisGRMHD ID_converter_ILGRMHD Seed_Magnetic_Fields_BNS ConservativeToPrimitive"
+CarpetLib::support_staggered_operators = "yes"
+IllinoisGRMHD::conserv_to_prims_debug = 0
+IllinoisGRMHD::Psi6threshold = 1e100
+IllinoisGRMHD::damp_lorenz = 0.1
+Seed_Magnetic_Fields_BNS::enable_IllinoisGRMHD_staggered_A_fields = "yes"
+#Seed_Magnetic_Fields_BNS::A_b = 0.64428596382321
+Seed_Magnetic_Fields_BNS::A_b = 0.0
+Seed_Magnetic_Fields_BNS::P_cut = 7.781463918147081e-06
+Seed_Magnetic_Fields_BNS::have_two_NSs_along_x_axis = "yes"
+Seed_Magnetic_Fields_BNS::x_c1 =  15.1875
+Seed_Magnetic_Fields_BNS::x_c2 = -15.1875
+ID_converter_ILGRMHD::pure_hydro_run = "no"
+IllinoisGRMHD::tau_atm= -0.00984698
+IllinoisGRMHD::rho_b_atm = 1e-10
+IllinoisGRMHD::gamma_th=2.0
+IllinoisGRMHD::neos=1
+ActiveThorns="Convert_to_HydroBase"
+Convert_to_HydroBase::Convert_to_HydroBase_every=1
+IllinoisGRMHD::use_ConservativeToPrimitive = "yes"
+
+#IllinoisGRMHD::K_poly = 123.613314525753
+#ID_converter_ILGRMHD::Gamma_Initial = 2.0
+#ID_converter_ILGRMHD::K_Initial     = 123.613314525753
+#ID_converter_ILGRMHD::init_real = "no"
+HydroBase::initial_Y_e = "one"
+HydroBase::initial_temperature = "zero"
+ID_converter_ILGRMHD::init_real = "yes"
+#========== ConservativeToPrimitive =============
+ActiveThorns = "ConservativeToPrimitive"
+
+ConservativeToPrimitive::c2p_EOS_type                  = "nuc_eos"	# "2D_Polytrope" "Ideal_Fluid"(gamma law) "Hybrid" "nuc_eos" "cold_tabulated" "barotropic_tabulated" "ideal_gas"
+ConservativeToPrimitive::c2p_preferred_algorithm       = "palenzuela"  #NR_3DE, NR_3DP, NR_2DR, NR_2DW, palenzuela, NR_2D_Noble, Newman, auto
+ConservativeToPrimitive::c2p_max_iterations            = 100
+ConservativeToPrimitive::c2p_extra_iterations          = 0
+#ConservativeToPrimitive::c2p_tolerance_retry           = 1e-6
+#ConservativeToPrimitive::c2p_use_backup_scheme         = "yes"
+#ConservativeToPrimitive::c2p_algorithm_retry           = "NR_2D_Noble"
+ConservativeToPrimitive::c2p_retain_B_atmo             = "no"
+ConservativeToPrimitive::c2p_excise                    = "no"
+ConservativeToPrimitive::c2p_grace                     = "no"		#gives a slightly higher tolerance for atmosphere
+ConservativeToPrimitive::c2p_rhoT_key                  = "no"		#set to yes for key_temp=1 (we are prescribing the temperature)
+ConservativeToPrimitive::c2p_tolerance                 = 1e-8
+ConservativeToPrimitive::c2p_enforce_v2_smaller_than_1 = "yes"
+ConservativeToPrimitive::c2p_rho_atmo_tolerance        = 1e-3
+ConservativeToPrimitive::c2p_rho_atmo                  = 1e-10
+ConservativeToPrimitive::c2p_use_eps_atmo              = "no"
+ConservativeToPrimitive::c2p_eps_atmo                  = 1e-10
+ConservativeToPrimitive::c2p_T_atmo                    = 0.1
+ConservativeToPrimitive::c2p_ye_atmo                   = 0.25
+ConservativeToPrimitive::gamma_th                      = 2.0
+
+# MacLachlan evolution parameters
+ADMBase::metric_type                    = physical
+ADMBase::evolution_method               = ML_BSSN
+ADMBase::lapse_evolution_method         = ML_BSSN
+ADMBase::shift_evolution_method         = ML_BSSN
+ADMBase::dtlapse_evolution_method       = ML_BSSN
+ADMBase::dtshift_evolution_method       = ML_BSSN
+
+
+ML_BSSN::timelevels                     = 3
+ML_BSSN::initial_boundary_condition  = "extrapolate-gammas"
+#ML_BSSN::boundary_condition          = "none"
+ML_BSSN::rhs_boundary_condition       = "NewRad"
+Boundary::radpower                      = 2 # not really needed I think but who knows what NewRad uses
+
+ML_BSSN::harmonicN           = 1      # 1+log
+ML_BSSN::harmonicF           = 2.0    # 1+log
+ML_BSSN::ShiftGammaCoeff     = 0.75
+ML_BSSN::AlphaDriver         = 0.0
+ML_BSSN::BetaDriver          = 1.0
+ML_BSSN::advectLapse         = 1.0
+ML_BSSN::advectShift         = 1.0
+
+ML_BSSN::MinimumLapse = 1.0e-8
+ML_BSSN::ML_log_confac_bound = "none"
+ML_BSSN::ML_metric_bound     = "none"
+ML_BSSN::ML_Gamma_bound      = "none"
+ML_BSSN::ML_trace_curv_bound = "none"
+ML_BSSN::ML_curv_bound       = "none"
+ML_BSSN::ML_lapse_bound      = "none"
+ML_BSSN::ML_dtlapse_bound    = "none"
+ML_BSSN::ML_shift_bound      = "none"
+ML_BSSN::ML_dtshift_bound    = "none"
+
+ML_BSSN::UseSpatialBetaDriver = 1
+ML_BSSN::SpatialBetaDriverRadius = 50
+
+ML_BSSN::epsDiss=0.0
+
+Dissipation::epsdis = 0.1
+Dissipation::order = 5
+Dissipation::vars                       = "
+        ML_BSSN::ML_log_confac
+        ML_BSSN::ML_metric
+        ML_BSSN::ML_trace_curv
+        ML_BSSN::ML_curv
+        ML_BSSN::ML_Gamma
+        ML_BSSN::ML_lapse
+        ML_BSSN::ML_shift
+        ML_BSSN::ML_dtlapse
+        ML_BSSN::ML_dtshift
+"
+#------------------------------------------------------------------------------
+# Analysis:
+#------------------------------------------------------------------------------
+ActiveThorns = "Hydro_Analysis"
+#Hydro_Analysis::Hydro_Analysis_comp_rho_max = "true"
+#Hydro_Analysis::Hydro_Analysis_rho_max_loc_only_positive_x = "true"
+#Hydro_Analysis::Hydro_Analysis_comp_rho_max_origin_distance = "yes"
+#Hydro_Analysis::Hydro_Analysis_average_multiple_maxima_locations = "no"
+#Hydro_Analysis::Hydro_Analysis_interpolator_name = "Lagrange polynomial interpolation (tensor product)"
+
+#------------------------------------------------------------------------------
+# Wave extraction:
+#------------------------------------------------------------------------------
+ActiveThorns = "QuasiLocalMeasures WeylScal4 Multipole"
+QuasiLocalMeasures::verbose   = "no"
+SphericalSurface::verbose   = "no"
+
+QuasiLocalMeasures::num_surfaces   = 2
+QuasiLocalMeasures::spatial_order  = 4
+QuasiLocalMeasures::interpolator = "Lagrange polynomial interpolation"
+QuasiLocalMeasures::interpolator_options = "order=4"
+QuasiLocalMeasures::surface_name[0] = "waveextract surface at 150"
+QuasiLocalMeasures::surface_name[1] = "waveextract surface at 300"
+
+WeylScal4::offset                    = 1e-8 
+WeylScal4::fd_order                  = "4th" 
+WeylScal4::verbose                   = 0 
+
+
+Multipole::nradii = 5
+Multipole::radius[0] = 100
+Multipole::radius[1] = 150
+Multipole::radius[2] = 200
+Multipole::radius[3] = 250
+Multipole::radius[4] = 300
+
+
+
+Multipole::variables = "WeylScal4::Psi4r{sw=-2 cmplx='WeylScal4::Psi4i' name='Psi4'}"
+Multipole::l_max = 5
+
+#------------------------------------------------------------------------------
+# Horizon finder
+#------------------------------------------------------------------------------
+ActiveThorns = "AHFinderDirect"
+AHFinderDirect::find_after_individual[0] = 76800
+AHFinderDirect::find_every               = 640
+AHFinderDirect::output_Theta_every       = 640
+AHFinderDirect::output_h_every           = 640
+AHFinderDirect::output_ASCII_files       = "no"
+AHFinderDirect::output_HDF5_files        = "yes"
+
+AHFinderDirect::h_base_file_name         = "AH.h"
+AHFinderDirect::Theta_base_file_name     = "AH.Theta"
+
+AHFinderDirect::N_horizons               = 1
+AHFinderDirect::origin_x[1]              = 0.0
+AHFinderDirect::origin_y[1]              = 0.0
+AHFinderDirect::origin_z[1]              = 0.0
+
+AHFinderDirect::initial_guess_method[1]                  = "coordinate sphere"
+AHFinderDirect::initial_guess__coord_sphere__x_center[1] =  0.0
+AHFinderDirect::initial_guess__coord_sphere__y_center[1] =  0.0
+AHFinderDirect::initial_guess__coord_sphere__z_center[1] =  0.0
+AHFinderDirect::initial_guess__coord_sphere__radius[1]   = 10.0
+
+#------------------------------------------------------------------------------
+# Additional diagnostics
+#------------------------------------------------------------------------------
+#Some EM quantities including b^2 and b^i
+ActiveThorns="smallbPoynET"
+smallbPoynET::smallbPoynET_compute_every = 32
+
+#*** get the total rest mass and com ***
+ActiveThorns="VolumeIntegrals_GRMHD"
+VolumeIntegrals_GRMHD::NumIntegrals = 6
+VolumeIntegrals_GRMHD::VolIntegral_out_every = 640
+VolumeIntegrals_GRMHD::enable_file_output = 1
+VolumeIntegrals_GRMHD::verbose = 1
+#tot vol
+VolumeIntegrals_GRMHD::Integration_quantity_keyword[1] = "one"
+#CoM star on left
+VolumeIntegrals_GRMHD::Integration_quantity_keyword[2] = "centerofmass"
+#integration vol star on left
+VolumeIntegrals_GRMHD::Integration_quantity_keyword[3] = "one"
+#CoM star on right
+VolumeIntegrals_GRMHD::Integration_quantity_keyword[4] = "centerofmass"
+#integration vol star on right
+VolumeIntegrals_GRMHD::Integration_quantity_keyword[5] = "one"
+#total rest mass
+VolumeIntegrals_GRMHD::Integration_quantity_keyword[6] = "restmass"
+#CoM star on left (track star on left)
+VolumeIntegrals_GRMHD::volintegral_sphere__center_x_initial         [2] = -15.2
+VolumeIntegrals_GRMHD::volintegral_inside_sphere__radius            [2] =  13.5
+VolumeIntegrals_GRMHD::amr_centre__tracks__volintegral_inside_sphere[2] =  0
+#integration vol star on left (track star on right)
+VolumeIntegrals_GRMHD::volintegral_sphere__center_x_initial         [3] = -15.2
+VolumeIntegrals_GRMHD::volintegral_inside_sphere__radius            [3] =  13.5
+VolumeIntegrals_GRMHD::amr_centre__tracks__volintegral_inside_sphere[3] =  0
+#CoM star on right
+VolumeIntegrals_GRMHD::volintegral_sphere__center_x_initial         [4] =  15.2
+VolumeIntegrals_GRMHD::volintegral_inside_sphere__radius            [4] =  13.5
+VolumeIntegrals_GRMHD::amr_centre__tracks__volintegral_inside_sphere[4] =  1
+#integration vol star on right
+VolumeIntegrals_GRMHD::volintegral_sphere__center_x_initial         [5] =  15.2
+VolumeIntegrals_GRMHD::volintegral_inside_sphere__radius            [5] =  13.5
+VolumeIntegrals_GRMHD::amr_centre__tracks__volintegral_inside_sphere[5] =  1
+#total rest mass
+VolumeIntegrals_GRMHD::volintegral_sphere__center_x_initial         [6] =  0.0
+VolumeIntegrals_GRMHD::volintegral_sphere__center_y_initial         [6] =  0.0
+VolumeIntegrals_GRMHD::volintegral_sphere__center_z_initial         [6] =  0.0
+VolumeIntegrals_GRMHD::volintegral_inside_sphere__radius            [6] =  384.0
+VolumeIntegrals_GRMHD::amr_centre__tracks__volintegral_inside_sphere[6] =  -1
+
+#*** get some outflow properties ***
+ActiveThorns="Outflow"
+
+#set up spherical surfaces for outflow calculation
+SphericalSurface::ntheta       [3] = 39
+SphericalSurface::nphi         [3] = 76
+#SphericalSurface::nghoststheta[5] = 2
+#SphericalSurface::nghostsphi  [5] = 2
+SphericalSurface::name         [3] = "inner outflow"
+SphericalSurface::set_spherical[3] = yes
+SphericalSurface::radius       [3] = 100
+
+SphericalSurface::ntheta       [4] = 39
+SphericalSurface::nphi         [4] = 76
+#SphericalSurface::nghoststheta[6] = 2
+#SphericalSurface::nghostsphi  [6] = 2
+SphericalSurface::name         [4] = "outer outflow"
+SphericalSurface::set_spherical[4] = yes
+SphericalSurface::radius       [4] = 300
+
+Outflow::compute_every        = 640
+Outflow::compute_every_det[0] = 640
+Outflow::compute_every_det[1] = 640
+Outflow::num_detectors        = 2
+Outflow::surface_index[0]     = 3
+Outflow::surface_index[1]     = 4
+Outflow::surface_name[0]      = "inner outflow"
+Outflow::surface_name[1]      = "outer outflow"
+Outflow::radius[0]            = 100.0
+Outflow::radius[1]            = 300.0
+Outflow::interpolator_name    = "Lagrange polynomial interpolation"
+Outflow::interpolator_pars    = "order=4"
+Outflow::verbose              = 1
+Outflow::out_format           = ".7e"
+Outflow::threshold_on_var     = "w_lorentz" # eninf
+Outflow::extra_variables      = "IllinoisGRMHD::vx IllinoisGRMHD::vy IllinoisGRMHD::vz IllinoisGRMHD::rho_b IllinoisGRMHD::P IllinoisGRMHD::prim_eps IllinoisGRMHD::Ye IllinoisGRMHD::Wlorentz IllinoisGRMHD::Ent IllinoisGRMHD::Temp"
+
+#####################################################################
+#                                                                    #
+#                            TRIGGERS                                #
+#                                                                    #
+######################################################################
+ActiveThorns = "Trigger"
+Trigger::Trigger_Number = 0
+Trigger::Trigger_Debug = 1
+
+Trigger::Trigger_Once                [0] = 1
+Trigger::Trigger_Checked_Variable    [0] = "IllinoisGRMHD::rho_b"
+Trigger::Trigger_Reduction           [0] = "maximum"
+Trigger::Trigger_Relation            [0] = "<"
+#Trigger::Trigger_Checked_Value       [0] = 0.0   #trigger off
+Trigger::Trigger_Checked_Value       [0] = 1.0
+Trigger::Trigger_Reaction            [0] = "steerscalar"
+Trigger::Trigger_Steered_Scalar      [0] = "CarpetRegrid2::num_levels[0]"
+Trigger::Trigger_Steered_Scalar_Value[0] = "7"
+
+Trigger::Trigger_Once                [1] = 1
+Trigger::Trigger_Checked_Variable    [1] = "IllinoisGRMHD::rho_b"
+Trigger::Trigger_Reduction           [1] = "maximum"
+Trigger::Trigger_Relation            [1] = "<"
+#Trigger::Trigger_Checked_Value       [1] = 0.0  #trigger off
+Trigger::Trigger_Checked_Value       [1] = 1.0
+Trigger::Trigger_Reaction            [1] = "steerscalar"
+Trigger::Trigger_Steered_Scalar      [1] = "CarpetRegrid2::num_levels[1]"
+Trigger::Trigger_Steered_Scalar_Value[1] = "7"
+
+Trigger::Trigger_Once                [2] = 1
+Trigger::Trigger_Checked_Variable    [2] = "IllinoisGRMHD::rho_b"
+Trigger::Trigger_Reduction           [2] = "maximum"
+Trigger::Trigger_Relation            [2] = "<"
+#Trigger::Trigger_Checked_Value       [2] = 0.0  #trigger off
+Trigger::Trigger_Checked_Value       [2] = 1.0
+Trigger::Trigger_Reaction            [2] = "steerscalar"
+Trigger::Trigger_Steered_Scalar      [2] = "CarpetRegrid2::num_levels[2]"
+Trigger::Trigger_Steered_Scalar_Value[2] = "7"
+
+#------------------------------------------------------------------------------
+# Checkpoint/Recovery:
+#------------------------------------------------------------------------------
+Multipole::out_every      = 64
+IOBasic::outInfo_every    = 64
+IOScalar::outScalar_every = 64
+IOASCII::out0D_every      = 64
+IOASCII::out1D_every      = 64
+IOHDF5::out1D_every       = 64
+IOHDF5::out2D_every       = 64
+IOHDF5::out3D_every       = -1
+IOHDF5::checkpoint        = "no"
+IOUtil::checkpoint_dir          = "LS220_PAL/CHECKPOINT"
+#IOUtil::checkpoint_every_walltime_hours = 12.0
+IOUtil::checkpoint_every        = 640
+IOUtil::checkpoint_keep         = 2
+IOUtil::checkpoint_on_terminate = "no"
+IOUtil::recover                 = "autoprobe"
+IOUtil::out_dir                           = "LS220_PAL"
+IOUtil::recover_dir                       = "LS220_PAL/CHECKPOINT"
+Multipole::out_dir                        = "LS220_PAL/Multipole"
+CarpetIOScalar::outscalar_dir             = "LS220_PAL/SCAL"
+IOHDF5::out1d_dir                         = "LS220_PAL/1DDAT"
+IOHDF5::out2d_dir                         = "LS220_PAL/2DDAT"
+IOHDF5::out3d_dir                         = "LS220_PAL/3DDAT"
+VolumeIntegrals_GRMHD::outVolIntegral_dir = "LS220_PAL/VolInts"
+
+IOBasic::outInfo_reductions = "minimum maximum"
+IOBasic::outInfo_vars  = "Carpet::physical_time_per_hour IllinoisGRMHD::rho_b IllinoisGRMHD::P IllinoisGRMHD::prim_eps IllinoisGRMHD::Ye IllinoisGRMHD::Temp IllinoisGRMHD::Ent"
+#IOBasic::outInfo_vars  = "Carpet::physical_time_per_hour HydroBase::rho HydroBase::press HydroBase::eps HydroBase::temperature HydroBase::Y_e ML_BSSN::ML_Ham HydroBase::vel ML_BSSN::ML_lapse"
+
+CarpetIOScalar::outScalar_reductions = "maximum norm2"
+CarpetIOScalar::one_file_per_group = no
+IOScalar::outScalar_vars     = "IllinoisGRMHD::rho_b IllinoisGRMHD::P IllinoisGRMHD::prim_eps IllinoisGRMHD::Temp IllinoisGRMHD::Ye IllinoisGRMHD::vx IllinoisGRMHD::vy IllinoisGRMHD::vz ML_BSSN::ML_Ham smallbPoynET::smallb2 smallbPoynET::smallbx smallbPoynET::smallby smallbPoynET::smallbz smallbPoynET::minus_one_minus_u_0 IllinoisGRMHD::Bx IllinoisGRMHD::By IllinoisGRMHD::Bz IllinoisGRMHD::Ax IllinoisGRMHD::Ay IllinoisGRMHD::Az ML_BSSN::ML_Mom IllinoisGRMHD::Wlorentz IllinoisGRMHD::Ent ADMBase::curv ADMBase::metric ADMBase::lapse ADMBase::shift Outflow::surface_projection_0[0] Outflow::surface_projection_0[1] Outflow::surface_projection_1[0] Outflow::surface_projection_1[1] Outflow::surface_projection_2[0] Outflow::surface_projection_2[1] Outflow::surface_projection_3[0] Outflow::surface_projection_3[1] Outflow::surface_projection_4[0] Outflow::surface_projection_4[1] Outflow::surface_projection_5[0] Outflow::surface_projection_5[1] Outflow::surface_projection_6[0] Outflow::surface_projection_6[1] Outflow::surface_projection_7[0] Outflow::surface_projection_7[1] Outflow::surface_projection_8[0] Outflow::surface_projection_8[1] Outflow::surface_projection_9[0] Outflow::surface_projection_9[1]"
+#IOScalar::outScalar_vars     = "HydroBase::rho HydroBase::press HydroBase::eps HydroBase::temperature HydroBase::Y_e ML_BSSN::ML_Ham"
+
+IOASCII::out0D_vars		= "
+    Carpet::timing
+"
+
+IOASCII::out1D_x = no
+IOASCII::out1D_y = no
+IOASCII::out1D_z = no  
+IOASCII::out1D_d = no  
+IOASCII::out1D_vars         = "IllinoisGRMHD::rho_b IllinoisGRMHD::P IllinoisGRMHD::prim_eps IllinoisGRMHD::Temp IllinoisGRMHD::Ye IllinoisGRMHD::vx IllinoisGRMHD::vy IllinoisGRMHD::vz ML_BSSN::ML_Ham IllinoisGRMHD::Bx IllinoisGRMHD::By IllinoisGRMHD::Bz IllinoisGRMHD::Ax IllinoisGRMHD::Ay IllinoisGRMHD::Az smallbPoynET::smallb2 smallbPoynET::smallbx smallbPoynET::smallby smallbPoynET::smallbz smallbPoynET::minus_one_minus_u_0 ML_BSSN::ML_Mom IllinoisGRMHD::Wlorentz IllinoisGRMHD::Ent ADMBase::curv ADMBase::metric ADMBase::lapse ADMBase::shift Outflow::surface_projection_0[0] Outflow::surface_projection_0[1] Outflow::surface_projection_1[0] Outflow::surface_projection_1[1] Outflow::surface_projection_2[0] Outflow::surface_projection_2[1] Outflow::surface_projection_3[0] Outflow::surface_projection_3[1] Outflow::surface_projection_4[0] Outflow::surface_projection_4[1] Outflow::surface_projection_5[0] Outflow::surface_projection_5[1] Outflow::surface_projection_6[0] Outflow::surface_projection_6[1] Outflow::surface_projection_7[0] Outflow::surface_projection_7[1] Outflow::surface_projection_8[0] Outflow::surface_projection_8[1] Outflow::surface_projection_9[0] Outflow::surface_projection_9[1]" 
+#IOASCII::out1D_vars         = "HydroBase::rho HydroBase::press HydroBase::eps HydroBase::temperature HydroBase::Y_e ML_BSSN::ML_Ham"
+
+IOHDF5::out1D_x = no
+IOHDF5::out1D_y = no
+IOHDF5::out1D_z = no  
+IOHDF5::out1D_d = no  
+IOHDF5::out1D_vars         = "IllinoisGRMHD::rho_b IllinoisGRMHD::P IllinoisGRMHD::prim_eps IllinoisGRMHD::Temp IllinoisGRMHD::Ye IllinoisGRMHD::vx IllinoisGRMHD::vy IllinoisGRMHD::vz ML_BSSN::ML_Ham IllinoisGRMHD::Bx IllinoisGRMHD::By IllinoisGRMHD::Bz IllinoisGRMHD::Ax IllinoisGRMHD::Ay IllinoisGRMHD::Az smallbPoynET::smallb2 smallbPoynET::smallbx smallbPoynET::smallby smallbPoynET::smallbz smallbPoynET::minus_one_minus_u_0 ML_BSSN::ML_Mom IllinoisGRMHD::Wlorentz IllinoisGRMHD::Ent ADMBase::curv ADMBase::metric ADMBase::lapse ADMBase::shift Outflow::surface_projection_0[0] Outflow::surface_projection_0[1] Outflow::surface_projection_1[0] Outflow::surface_projection_1[1] Outflow::surface_projection_2[0] Outflow::surface_projection_2[1] Outflow::surface_projection_3[0] Outflow::surface_projection_3[1] Outflow::surface_projection_4[0] Outflow::surface_projection_4[1] Outflow::surface_projection_5[0] Outflow::surface_projection_5[1] Outflow::surface_projection_6[0] Outflow::surface_projection_6[1] Outflow::surface_projection_7[0] Outflow::surface_projection_7[1] Outflow::surface_projection_8[0] Outflow::surface_projection_8[1] Outflow::surface_projection_9[0] Outflow::surface_projection_9[1]"
+#IOHDF5::out1D_vars         = "HydroBase::rho HydroBase::press HydroBase::eps HydroBase::temperature HydroBase::Y_e ML_BSSN::ML_Ham"
+
+IOHDF5::out2D_xy = no
+IOHDF5::out2D_yz = no
+IOHDF5::out2D_xz = no
+IOHDF5::out2D_vars         = "IllinoisGRMHD::rho_b IllinoisGRMHD::P IllinoisGRMHD::prim_eps IllinoisGRMHD::Temp IllinoisGRMHD::Ye IllinoisGRMHD::vx IllinoisGRMHD::vy IllinoisGRMHD::vz ML_BSSN::ML_Ham ML_BSSN::ML_lapse IllinoisGRMHD::Bx IllinoisGRMHD::By IllinoisGRMHD::Bz IllinoisGRMHD::Ax IllinoisGRMHD::Ay IllinoisGRMHD::Az smallbPoynET::smallb2 smallbPoynET::smallbx smallbPoynET::smallby smallbPoynET::smallbz smallbPoynET::minus_one_minus_u_0 ML_BSSN::ML_Mom IllinoisGRMHD::Wlorentz IllinoisGRMHD::Ent ADMBase::curv ADMBase::metric ADMBase::lapse ADMBase::shift Outflow::surface_projection_0[0] Outflow::surface_projection_0[1] Outflow::surface_projection_1[0] Outflow::surface_projection_1[1] Outflow::surface_projection_2[0] Outflow::surface_projection_2[1] Outflow::surface_projection_3[0] Outflow::surface_projection_3[1] Outflow::surface_projection_4[0] Outflow::surface_projection_4[1] Outflow::surface_projection_5[0] Outflow::surface_projection_5[1] Outflow::surface_projection_6[0] Outflow::surface_projection_6[1] Outflow::surface_projection_7[0] Outflow::surface_projection_7[1] Outflow::surface_projection_8[0] Outflow::surface_projection_8[1] Outflow::surface_projection_9[0] Outflow::surface_projection_9[1]"
+#IOHDF5::out2D_vars         = "HydroBase::rho HydroBase::press HydroBase::eps HydroBase::temperature HydroBase::Y_e HydroBase::vel ML_BSSN::ML_Ham ML_BSSN::ML_shift"
+
+IOHDF5::out3D_vars         = "IllinoisGRMHD::rho_b IllinoisGRMHD::P IllinoisGRMHD::prim_eps IllinoisGRMHD::Temp IllinoisGRMHD::Ye IllinoisGRMHD::vx IllinoisGRMHD::vy IllinoisGRMHD::vz ML_BSSN::ML_Ham IllinoisGRMHD::Bx IllinoisGRMHD::By IllinoisGRMHD::Bz"
+#IOHDF5::out3D_vars         = "HydroBase::rho HydroBase::press HydroBase::eps HydroBase::temperature HydroBase::Y_e ML_BSSN::ML_Ham"
