@@ -143,7 +143,7 @@ static inline int apply_tau_floor(const int index,const CCTK_REAL tau_atm,const 
 /***********************************************************/
 
 
-void IllinoisGRMHD_enforce_limits_on_primitives_and_recompute_conservs(const int already_computed_physical_metric_and_inverse,CCTK_REAL *U,struct output_stats &stats,eos_struct &eos,
+void IllinoisGRMHD_enforce_limits_on_primitives_and_recompute_conservs(const int eos_key, const int already_computed_physical_metric_and_inverse,CCTK_REAL *U,struct output_stats &stats,eos_struct &eos,
                                                                        CCTK_REAL *METRIC,CCTK_REAL g4dn[4][4],CCTK_REAL g4up[4][4], CCTK_REAL *TUPMUNU,CCTK_REAL *TDNMUNU,CCTK_REAL *CONSERVS, const int index) {
   DECLARE_CCTK_PARAMETERS;
 
@@ -197,15 +197,14 @@ void IllinoisGRMHD_enforce_limits_on_primitives_and_recompute_conservs(const int
     EOS_press_cold(&xrho, &xye, &P_cold, &xeps, &keyerr, &anyerr);
     // Pressure floor & ceiling:
     enforce_pressure_floor_ceiling(stats,eos.K_poly,P_cold,METRIC_LAP_PSI4[PSI6],Psi6threshold,U[RHOB],rho_b_atm, U[PRESSURE]);
-    // FIXME: I am not recomputing the correct epsilon here!
-    // Hopefully floor and ceilings are applied only in interior of black holes and in the atmosphere
     // NOTE: Setting eps=xeps (returned from EOS_press_cold) here forces a cold enthalpy, which leads 
-    // to incorrect evolution for finite Temp EOS. However, not setting eps=xeps sometimes leads to a crash 
-    // for hybrid EOS. 
-    // There is no function to get eps from pressure (without the temperature) in the 
-    // EOS driver, so we leave eps = U[EPS] (recovered), even if it may be inconsistent with the pressure.
-    // This is fixed by using the reconstructed pressure and epsilon to get the enthalpy in mhdflux.C
-    //eps=xeps;
+    // to incorrect evolution for finite Temp EOS. However, not setting eps=xeps can sometimes leads to a crash 
+    // for hybrid EOS.
+    // TODO: check that epsilon is calculated correctly within ConservativeToPrimitive and EOS_Omni
+    // for polytropic EOSs. This temporary fix gives stable evolutions for both types of EOSs.
+    if(eos_key!=4){
+        eps=xeps + (U[PRESSURE]-P_cold)/(gamma_th-1.0)/U[RHOB];
+    }
   }
 
   h_enthalpy = 1.0 + eps + U[PRESSURE]/U[RHOB];
