@@ -217,7 +217,7 @@ extern "C" void IllinoisGRMHD_outer_boundaries_on_P_rho_b_vx_vy_vz(CCTK_ARGUMENT
 
           const int already_computed_physical_metric_and_inverse=0;
           CCTK_REAL g4dn[4][4],g4up[4][4];
-          IllinoisGRMHD_enforce_limits_on_primitives_and_recompute_conservs(already_computed_physical_metric_and_inverse,U,stats,eos,METRIC,g4dn,g4up, TUPMUNU,TDNMUNU,CONSERVS,index);
+          IllinoisGRMHD_enforce_limits_on_primitives_and_recompute_conservs(*c2p_eos_eoskey,already_computed_physical_metric_and_inverse,U,stats,eos,METRIC,g4dn,g4up, TUPMUNU,TDNMUNU,CONSERVS,index);
 
           rho_b[index] = U[RHOB];
           P[index]     = U[PRESSURE];

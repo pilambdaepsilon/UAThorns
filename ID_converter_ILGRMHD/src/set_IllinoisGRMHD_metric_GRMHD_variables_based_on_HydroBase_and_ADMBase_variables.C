@@ -408,7 +408,7 @@ extern "C" void set_IllinoisGRMHD_metric_GRMHD_variables_based_on_HydroBase_and_
 	double TUPMUNU[10],TDNMUNU[10];
 
         struct output_stats stats; stats.failure_checker=0;
-	IllinoisGRMHD_enforce_limits_on_primitives_and_recompute_conservs(zero_int,PRIMS,stats,eos,METRIC,g4dn,g4up,TUPMUNU,TDNMUNU,CONSERVS,index);
+	IllinoisGRMHD_enforce_limits_on_primitives_and_recompute_conservs(*c2p_eos_eoskey,zero_int,PRIMS,stats,eos,METRIC,g4dn,g4up,TUPMUNU,TDNMUNU,CONSERVS,index);
 
 	rho_b[index] = PRIMS[RHOB];
 	Ye[index]    = PRIMS[YE];
