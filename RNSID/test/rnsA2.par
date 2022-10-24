@@ -1,0 +1,179 @@
+##----------------------------------------------
+## mclachlan grhydro rns
+##----------------------------------------------
+ActiveThorns = "Time MoL"
+ActiveThorns = "Coordbase CartGrid3d Boundary"
+ActiveThorns = "SymBase ADMBase HydroBase InitBase"
+ActiveThorns = "IOUtil"
+ActiveThorns = "SpaceMask CoordGauge Constants LocalReduce aeilocalinterp LoopControl"
+ActiveThorns = "Carpet CarpetLib CarpetReduce CarpetRegrid2 CarpetInterp CarpetEvolutionMask"
+ActiveThorns = "CarpetIOASCII CarpetIOScalar CarpetIOHDF5 CarpetIOBasic"
+
+ActiveThorns = "NaNChecker"
+
+# grid parameters
+CartGrid3D::type         = "coordbase"
+CartGrid3D::domain       = "full"
+CartGrid3D::avoid_origin = "no"
+CoordBase::xmin =-30.0
+CoordBase::ymin =-30.0
+CoordBase::zmin =   0.0
+CoordBase::xmax = 30.0
+CoordBase::ymax = 30.0
+CoordBase::zmax = 30.0
+CoordBase::dx   = 3.0
+CoordBase::dy   = 3.0
+CoordBase::dz   = 3.0
+
+CoordBase::boundary_size_x_lower        = 3
+CoordBase::boundary_size_y_lower        = 3
+CoordBase::boundary_size_z_lower        = 3
+CoordBase::boundary_size_x_upper        = 3
+CoordBase::boundary_size_y_upper        = 3
+CoordBase::boundary_size_z_upper        = 3
+CoordBase::boundary_shiftout_x_lower    = 0
+CoordBase::boundary_shiftout_y_lower    = 0
+CoordBase::boundary_shiftout_z_lower    = 1
+CoordBase::boundary_shiftout_x_upper    = 0
+CoordBase::boundary_shiftout_y_upper    = 0
+CoordBase::boundary_shiftout_z_upper    = 0
+
+ActiveThorns = "ReflectionSymmetry"
+ReflectionSymmetry::reflection_x = "no"
+ReflectionSymmetry::reflection_y = "no"
+ReflectionSymmetry::reflection_z = "yes"
+ReflectionSymmetry::avoid_origin_x = "no"
+ReflectionSymmetry::avoid_origin_y = "no"
+ReflectionSymmetry::avoid_origin_z = "no"
+
+
+HydroBase::timelevels            = 3
+
+ADMBase::metric_type     = "physical"
+ADMBase::metric_timelevels = 3
+ADMBase::lapse_timelevels = 3
+ADMBase::shift_timelevels = 3
+
+SpaceMask::use_mask      = "yes"
+cactus::cctk_itlast         = 0
+ 
+Carpet::domain_from_coordbase = "yes"
+Carpet::enable_all_storage    = no
+Carpet::use_buffer_zones      = "yes"
+
+Carpet::poison_new_timelevels    = "yes"
+Carpet::check_for_poison         = "no"
+Carpet::poison_value             = 113
+
+Carpet::init_3_timelevels        = no
+Carpet::init_fill_timelevels     = "yes"
+
+CarpetLib::poison_new_memory = "yes"
+CarpetLib::poison_value      = 114
+###carpetlib::print_memstats_every      = 65536
+CarpetLib::check_bboxes              = "no"
+CarpetLib::interleave_communications = "yes"
+CarpetLib::combine_sends             = "yes"
+
+CarpetInterp::tree_search       = "yes"
+CarpetInterp::check_tree_search = "no"
+
+# ------------------------------------
+# system specific Carpet paramters
+# ------------------------------------
+Carpet::max_refinement_levels    = 2
+driver::ghost_size               = 3
+Carpet::prolongation_order_space = 5
+Carpet::prolongation_order_time  = 2
+
+CarpetRegrid2::regrid_every = 0
+CarpetRegrid2::num_centres  = 1
+
+CarpetRegrid2::num_levels_1 = 2
+CarpetRegrid2::radius_1[1]  =  15.0
+
+time::dtfac = 0.25
+MoL::ODE_Method             = "rk4"
+MoL::MoL_Intermediate_Steps = 4
+MoL::MoL_Num_Scratch_Levels = 1
+
+# check all physical variables for NaNs
+NaNChecker::check_every = 1
+NaNChecker::action_if_found = "just warn" #"terminate", "just warn", "abort"
+NaNChecker::check_vars = "ADMBase::metric ADMBase::lapse ADMBase::shift HydroBase::rho HydroBase::eps HydroBase::press HydroBase::vel"
+
+## Lapse Condition:  partial_t alpha = - alpha K
+## Shift Condition:  partial_t beta^i = 0
+
+# init parameters
+InitBase::initial_data_setup_method = "init_some_levels"
+
+#---------------------------------------------
+#ActiveThorns = "TOVSolver"
+#TOVSolver::TOV_Rho_Central[0] = 1.28e-3
+#TOVSolver::TOV_Gamma          = 2.0
+#TOVSolver::TOV_K              = 100.0
+#---------------------------------------------
+ActiveThorns="Hydro_RNSID"
+
+ADMBase::initial_data  = "hydro_rnsid"
+ADMBase::initial_lapse = "hydro_rnsid"
+ADMBase::initial_shift = "hydro_rnsid"
+ADMBase::initial_dtlapse = "zero"
+ADMBase::initial_dtshift = "zero"
+
+
+Hydro_rnsid::save_2Dmodel    = "yes"
+Hydro_rnsid::recover_2Dmodel = "yes"
+
+Hydro_rnsid::accuracy  = 1e-10
+Hydro_rnsid::RNS_rho_min = 1e-11
+Hydro_rnsid::RNS_Gamma = 2
+Hydro_rnsid::RNS_K     = 100
+Hydro_rnsid::rho_central = 0.00107207
+Hydro_rnsid::axes_ratio  = 0.875
+Hydro_rnsid::rotation_type = "diff"
+Hydro_rnsid::A_diff        = 1
+Hydro_rnsid::model2D_file  = $parfile + "/A2.h5"
+
+###################################################
+
+IOBasic::outInfo_every              = 1
+IOBasic::outInfo_vars               = "HydroBase::rho ADMBase::lapse"
+
+IO::out_dir      = $parfile
+IO::out_fileinfo = "none"
+IO::parfile_write = "no"
+
+
+IOScalar::outScalar_every = 1
+IOScalar::all_reductions_in_one_file = "no"
+IOScalar::one_file_per_group = yes
+IOScalar::outScalar_reductions = "maximum"
+IOScalar::outScalar_vars  = "
+ HydroBase::rho
+ HydroBase::press
+ HydroBase::eps
+ HydroBase::vel
+"
+
+IOASCII::one_file_per_group = yes
+IOASCII::output_symmetry_points = no
+IOASCII::out3D_ghosts           = no
+IOASCII::out3D_outer_ghosts     = no
+
+IOASCII::out1D_every     = 1
+IOASCII::out1D_vars      = "
+ HydroBase::rho
+ HydroBase::press
+ HydroBase::eps
+ HydroBase::vel
+ ADMBase::lapse
+ ADMBase::metric
+ ADMBase::curv
+"
+
+
+##----------------------------------------------
+## END mclachlan grhydro rns
+##----------------------------------------------

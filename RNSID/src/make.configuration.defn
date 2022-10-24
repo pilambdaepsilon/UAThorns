@@ -1,0 +1,4 @@
+# Main make.configuration.defn file for RNS
+
+# Define this thorn's utilities
+ALL_UTILS += RNS RNS_readID

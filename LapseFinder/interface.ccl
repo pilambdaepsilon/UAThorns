@@ -1,0 +1,10 @@
+# Interface definition for thorn LapseFinder
+
+implements: LapseFinder
+
+inherits: Grid, ADMBase
+
+public:
+
+CCTK_REAL LapseFinder_alp_min_loc[3] type = SCALAR "coordinate location of the minimum of the lapse"
+CCTK_REAL LapseFinder_alp_min type = SCALAR "value of the minimum of the lapse"

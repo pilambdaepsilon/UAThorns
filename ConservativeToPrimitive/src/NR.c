@@ -63,7 +63,7 @@ void calc_prim_from_x(const double S_squared, const double BdotS,
     EOS_press_ent_abar(c2p.eoskey,keytemp,xrho,&xeps,&xtemp,xye,&xprs,&xent,&xabar,&keyerr);
     prim[ENT] = xent;
     prim[A_BAR] = xabar;
-    prim[MU_HAT] = 0.0;
+//    prim[MU_HAT] = 0.0;
   } else {
     EOS_Omni_press(c2p.eoskey, keytemp, c2p.eos_prec, 1, &xrho, &xeps, &xtemp, &xye, &xprs, &keyerr, &anyerr);
   }

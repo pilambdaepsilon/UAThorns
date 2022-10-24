@@ -109,6 +109,7 @@ static void reconstruct_set_of_prims_PPM(const int eos_key,const int keytemp,con
 	dU[whichvar][PLUS2]  = U[whichvar][PLUS2] - U[whichvar][PLUS1];
 
 	slope_lim_dU[whichvar][MINUS1]=slope_limit(dU[whichvar][MINUS1],dU[whichvar][PLUS0]);
+	//slope_lim_dU[whichvar][PLUS0] =slope_limit(dU[whichvar][PLUS0], dU[whichvar][PLUS1]);
 	slope_lim_dU[whichvar][PLUS1] =slope_limit(dU[whichvar][PLUS1], dU[whichvar][PLUS2]);
 
 	// Steepen rho
@@ -233,7 +234,6 @@ static inline void steepen_rho(const int eos_key,const int keytemp,const CCTK_RE
                                CCTK_REAL *rho_br_ppm,CCTK_REAL *rho_bl_ppm) {
 
   DECLARE_CCTK_PARAMETERS;
-
 
   // Next compute centered differences d RHOB and d^2 RHOB
   CCTK_REAL d1rho_b     = 0.5*(U[RHOB][PLUS1] - U[RHOB][MINUS1]);

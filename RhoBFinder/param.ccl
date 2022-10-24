@@ -1,0 +1,33 @@
+# Parameter definitions for thorn RhoBFinder
+
+INT RhoBFinder_comp_rho_b_max_every "How often to look for the value and location of the maximum of rho_b" STEERABLE = recover
+{
+  0:0 :: "Never"
+  1:* :: "every so often"
+} 1
+
+# the following is useful eg. when using cell-centering where there might not
+# be a grid point at the centre of the star and initially several equally valid
+# maxima might be clustered around it.
+BOOLEAN RhoBFinder_average_multiple_maxima_locations "when finding more than one global maximum location, average position and use result" STEERABLE = always
+{
+} "false"
+
+INT verbosity_level "how much information to ouptut to the logs" STEERABLE = always
+{
+  0 :: "Output nothing"
+  1 :: "warn when finding multiple maxima"
+  2 :: "also output location of maxima"
+} 1
+
+BOOLEAN RhoBFinder_rho_b_max_loc_only_positive_x "Restrict location search for density maximum to positive values of x" STEERABLE = always
+{
+} "false"
+
+BOOLEAN RhoBFinder_compute_only_first "Just compute the first iteration" STEERABLE = always
+{
+} "true"
+
+BOOLEAN RhoBFinder_pick_one "When finding more than one maximuma, just pick one" STEERABLE = always
+{
+} "true"

@@ -508,7 +508,7 @@ void calc_prim_noble(const double S_squared, const double BdotS,
 
   double B1_cov, B2_cov, B3_cov;
   double con_B1, con_B2, con_B3; 
-  //con_B1 = con[B1_con]*ONE_OVER_SQRT_4PI; con_B2 = con[B2_con]*ONE_OVER_SQRT_4PI; con_B3 = con[B3_con] * ONE_OVER_SQRT_4PI;
+//  con_B1 = con[B1_con]*ONE_OVER_SQRT_4PI; con_B2 = con[B2_con]*ONE_OVER_SQRT_4PI; con_B3 = con[B3_con] * ONE_OVER_SQRT_4PI;
   con_B1 = con[B1_con]; con_B2 = con[B2_con]; con_B3 = con[B3_con];
   // Lower indices - covariant
   B1_cov = g_cov[1][1]*con_B1+g_cov[1][2]*con_B2+g_cov[1][3]*con_B3;
@@ -556,7 +556,7 @@ void calc_prim_noble(const double S_squared, const double BdotS,
     EOS_press_ent_abar(c2p.eoskey,keytemp,xrho,&xeps,&xtemp,xye,&xprs,&xentr,&xabar,&keyerr);
     prim[ENT] = xentr;
     prim[A_BAR] = xabar;
-    prim[MU_HAT] = 0.0;
+//    prim[MU_HAT] = 0.0;
   } else {
     EOS_Omni_press(c2p.eoskey, keytemp, c2p.eos_prec, 1, &xrho, &xeps, &xtemp, &xye, &xprs, &keyerr, &anyerr);
   }
@@ -580,7 +580,7 @@ void calc_prim_noble(const double S_squared, const double BdotS,
 
      EOS_Omni_short(c2p.eoskey, keytempS, c2p.eos_prec, 1, &xrhoS, &xepsS, &xtempS, &xyeS, &xpressS, &xentS, &xcs2S, &xdedtS, &xdpderhoS, &xdpdrhoeS, &xmunuS, &keyerr, &anyerr);
      prim[ENT]      = xentS;
-     prim[MU_HAT]   = 0.0;
+//     prim[MU_HAT]   = 0.0;
 //     prim[MU_HAT]   = fmin(xmuhatS, 300);
   }
 }

@@ -194,7 +194,7 @@ void reset_temperature(double * prim)
     EOS_press_ent_abar(c2p.eoskey,keytemp,xrho,&xeps,&xtemp,xye,&xpress,&xent,&xabar,&keyerr);
     prim[ENT] = xent;
     prim[A_BAR] = xabar;
-    prim[MU_HAT] = 0.0;
+//    prim[MU_HAT] = 0.0;
   } else {
     EOS_Omni_press(c2p.eoskey, keytemp, c2p.eos_prec, 1, &xrho, &xeps, &xtemp, &xye, &xpress, &keyerr, &anyerr);
   }

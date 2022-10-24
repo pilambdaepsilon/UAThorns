@@ -1,0 +1,10 @@
+# Interface definition for thorn RhoBFinder
+
+implements: RhoBFinder
+
+inherits: Grid, IllinoisGRMHD
+
+public:
+
+CCTK_REAL RhoBFinder_rho_b_max_loc[3] type = SCALAR "coordinate location of the maximum of rho_b"
+CCTK_REAL RhoBFinder_rho_b_max type = SCALAR "value of the maximum of rho_b"

@@ -143,8 +143,8 @@ static inline int apply_tau_floor(const int index,const CCTK_REAL tau_atm,const 
 /***********************************************************/
 
 
-void IllinoisGRMHD_enforce_limits_on_primitives_and_recompute_conservs(const int eos_key, const int already_computed_physical_metric_and_inverse,CCTK_REAL *U,struct output_stats &stats,eos_struct &eos,
-                                                                       CCTK_REAL *METRIC,CCTK_REAL g4dn[4][4],CCTK_REAL g4up[4][4], CCTK_REAL *TUPMUNU,CCTK_REAL *TDNMUNU,CCTK_REAL *CONSERVS, const int index) {
+void IllinoisGRMHD_enforce_limits_on_primitives_and_recompute_conservs(const int eos_key, CCTK_REAL yemin, CCTK_REAL yemax, const int already_computed_physical_metric_and_inverse,CCTK_REAL *U,
+		struct output_stats &stats,eos_struct &eos, CCTK_REAL *METRIC,CCTK_REAL g4dn[4][4],CCTK_REAL g4up[4][4], CCTK_REAL *TUPMUNU,CCTK_REAL *TDNMUNU,CCTK_REAL *CONSERVS, const int index) {
   DECLARE_CCTK_PARAMETERS;
 
   CCTK_REAL METRIC_LAP_PSI4[NUMVARS_METRIC_AUX];
@@ -160,11 +160,9 @@ void IllinoisGRMHD_enforce_limits_on_primitives_and_recompute_conservs(const int
   U[RHOB] = MAX(U[RHOB],rho_b_atm);
   // Density ceiling:
   U[RHOB] = MIN(U[RHOB],rho_b_max);
-//  U[EPS] = MAX(U[EPS],rho_b_atm);
-//  U[EPS] = MIN(U[EPS],rho_b_max);
   // Ye floor and ceiling:
-  U[YE] = MAX(U[YE],0.036);
-  U[YE] = MIN(U[YE],1.0);
+  U[YE] = MAX(U[YE],yemin);
+  U[YE] = MIN(U[YE],yemax);
   U[TEMP] = MAX(U[TEMP],0.1);
   //Entropy floor
   U[ENTROPY] = MAX(U[ENTROPY],rho_b_atm);
@@ -190,7 +188,7 @@ void IllinoisGRMHD_enforce_limits_on_primitives_and_recompute_conservs(const int
     eps = U[EPS];
     CCTK_REAL xrho = U[RHOB];
     CCTK_REAL xye  = U[YE];
-    CCTK_REAL xeps;
+    CCTK_REAL xeps;   //use cold epsilon (xeps) to calculate the full epsilon (eps) in case of analytic EOSs
     CCTK_INT anyerr, keyerr;
     CCTK_INT npoints = 1;
     // I have to consider the smallest temperature available to get the "cold" component
@@ -198,10 +196,11 @@ void IllinoisGRMHD_enforce_limits_on_primitives_and_recompute_conservs(const int
     // Pressure floor & ceiling:
     enforce_pressure_floor_ceiling(stats,eos.K_poly,P_cold,METRIC_LAP_PSI4[PSI6],Psi6threshold,U[RHOB],rho_b_atm, U[PRESSURE]);
     // NOTE: Setting eps=xeps (returned from EOS_press_cold) here forces a cold enthalpy, which leads 
-    // to incorrect evolution for finite Temp EOS. However, not setting eps=xeps can sometimes leads to a crash 
-    // for hybrid EOS.
+    // to incorrect evolution for finite Temp EOSs. However, not setting eps=xeps can sometimes lead to a crash 
+    // for hybrid EOSs.
     // TODO: check that epsilon is calculated correctly within ConservativeToPrimitive and EOS_Omni
-    // for polytropic EOSs. This temporary fix gives stable evolutions for both types of EOSs.
+    // for polytropic EOSs. This temporary fix gives stable evolutions for both types of EOSs, and 
+    // is consistent with what is done in mhdflux.C
     if(eos_key!=4){
         eps=xeps + (U[PRESSURE]-P_cold)/(gamma_th-1.0)/U[RHOB];
     }

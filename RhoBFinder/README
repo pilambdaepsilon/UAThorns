@@ -1,0 +1,10 @@
+Cactus Code Thorn LapseFinder
+Author(s)    : Gabriele Bozzola
+Maintainer(s): Nobody
+Licence      : LGPLv2+
+--------------------------------------------------------------------------
+
+1. Purpose
+
+This thorn find the location of the minimum of the maximum rest mass density used
+in IllinoisGRMHD (rho_b). It may be used to track NSs

@@ -80,8 +80,8 @@ const int kronecker_delta[4][3] = { { 0,0,0 },
                                     { 0,0,1 } };
 
 /* PUBLIC FUNCTIONS, USED OUTSIDE IllinoisGRMHD AS WELL */
-void IllinoisGRMHD_enforce_limits_on_primitives_and_recompute_conservs(const int eos_key, const int already_computed_physical_metric_and_inverse,CCTK_REAL *U,struct output_stats &stats,eos_struct &eos,
-                                                                       CCTK_REAL *METRIC,CCTK_REAL g4dn[4][4],CCTK_REAL g4up[4][4], CCTK_REAL *TUPMUNU,CCTK_REAL *TDNMUNU,CCTK_REAL *CONSERVS, const int index);
+void IllinoisGRMHD_enforce_limits_on_primitives_and_recompute_conservs(const int eos_key, CCTK_REAL yemin, CCTK_REAL yemax, const int already_computed_physical_metric_and_inverse,CCTK_REAL *U,
+		struct output_stats &stats,eos_struct &eos, CCTK_REAL *METRIC,CCTK_REAL g4dn[4][4],CCTK_REAL g4up[4][4], CCTK_REAL *TUPMUNU,CCTK_REAL *TDNMUNU,CCTK_REAL *CONSERVS, const int index);
 
 void IllinoisGRMHD_convert_ADM_to_BSSN__enforce_detgtij_eq_1__and_compute_gtupij
 (const cGH *cctkGH,const int *cctk_lsh,

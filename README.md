@@ -6,5 +6,8 @@ This collection of thorns, developed at the University of Arizona, includes:
 * ConservativeToPrimitive - a thorn which drives the conservative-to-primitive routines used in tabulated-EOS-compatible version of IllinoisGRMHD.
 * UA_EOS_Omni - a modified version of the publicly available equation of state driver thorn (EOS_Omni) used within the EinsteinToolkit. 
 * Meudon_Bin_NS - a modified version of the Muedon_Bin_NS thorn which allows for the import of binary neutron star initial data built using tabulated, finite temperature equations of state.
+* RhoBFinder - a thorn which finds the maximum rest mass density used in IllinoisGRMHD and may be used to track NSs for AMR
+* LapseFinder - a thorn which finds the minimum lapse and may be used to track BH/NSs for AMR
+* RNSID - a version of Hydro_RNSID as found in the EinsteiToolkit, which also allows for initialization of the electron fraction based on beta equilibrium
 
 These thorns are free to use under the GNU Public License v3 (GPLv3)

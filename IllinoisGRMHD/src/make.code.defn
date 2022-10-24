@@ -1,6 +1,6 @@
 # Main make.code.defn file for thorn IllinoisGRMHD
 
-# Source files in this directory include prepare_c2p.c at top level if you want the C2P_appendage
+# Source files in this directory
 SRCS =  InitSymBound.C MoL_registration.C \
     \
     postpostinitial__set_symmetries__copy_timelevels.C \

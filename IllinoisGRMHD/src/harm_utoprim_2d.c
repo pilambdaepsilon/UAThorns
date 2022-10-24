@@ -504,7 +504,7 @@ static int general_newton_raphson( CCTK_REAL x[], int n, long &n_iter,
   }   // END of while(keep_iterating)
 
   /*  Check for bad untrapped divergences : */
-  if( (finite(f)==0) ||  (finite(df)==0) ) {
+  if( (std::isfinite(f)==0) ||  (std::isfinite(df)==0) ) {
     return(2);
   }
 

@@ -46,7 +46,7 @@ void calc_prim(const double x, const double * con, const double * param, const d
     c2p_rep->nEOScalls += nEOScalls;
     prim[ENT] = ent;
     prim[A_BAR] = abar;
-    prim[MU_HAT] = 0.0;
+//    prim[MU_HAT] = 0.0;
   } else {
     EOS_Omni_press(c2p.eoskey, keytemp, c2p.eos_prec, 1, &rho, &eps, &temp, &ye, &press, &keyerr, &anyerr);
     c2p_rep->nEOScalls += nEOScalls;
@@ -91,7 +91,7 @@ void calc_prim(const double x, const double * con, const double * param, const d
 //     EOS_Omni_full(c2p.eoskey, keytempS, c2p.eos_prec, 1, &xrhoS, &xepsS, &xtempS, &xyeS, &xpressS, &xentS, &xcs2S, &xdedtS, &xdpderhoS, &xdpdrhoeS, &xxaS, &xxhS, &xxnS, &xxpS, 
 //		      &xabarS, &xzbarS, &xmueS, &xmunS, &xmupS, &xmuhatS, &keyerr, &anyerr);
      prim[ENT]      = xentS;
-     prim[MU_HAT]   = 0.0;
+//     prim[MU_HAT]   = 0.0;
 //     prim[MU_HAT]   = fmin(xmuhatS, 300);
   }
   double cBsqr=B_squared; double cS = BdotS; double cVsqr = 1.- 1./(W*W);

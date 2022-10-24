@@ -1,0 +1,9 @@
+# Configuration definition for thorn Hydro_rnsid
+# $Header$
+
+REQUIRES EOS_Base Boundary CartGrid3D SpaceMask HDF5
+
+# in case we link against parallel HDF5
+OPTIONAL MPI
+{
+}

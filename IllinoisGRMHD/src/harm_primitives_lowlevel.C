@@ -125,8 +125,6 @@ inline int harm_primitives_gammalaw_lowlevel(const int index,const int i,const i
     if(which_guess==2) {
       //Use atmosphere as initial guess:
       rho_b_oldL = 100.0*rho_b_atm;
-//      YeL = 100.0*rho_b_atm;
-//      YeL = 0.5;
       // GAMMA=2 ONLY:
       if (gamma_equals2==1) {
         P_oldL = kpoly*rho_b_oldL*rho_b_oldL;
@@ -191,6 +189,7 @@ inline int harm_primitives_gammalaw_lowlevel(const int index,const int i,const i
       if (check==1) {
         CCTK_VInfo(CCTK_THORNSTRING,"Font fix failed!");
         CCTK_VInfo(CCTK_THORNSTRING,"i,j,k = %d %d %d, stats.failure_checker = %d x,y,z = %e %e %e , index=%d st_i = %e %e %e, rhostar = %e, Yet = %e, Bi = %e %e %e, gij = %e %e %e %e %e %e, Psi6 = %e",i,j,k,stats.failure_checker,X[index],Y[index],Z[index],index,mhd_st_x_orig,mhd_st_y_orig,mhd_st_z_orig,rho_star_orig,Yet_orig,PRIMS[BX_CENTER],PRIMS[BY_CENTER],PRIMS[BZ_CENTER],METRIC_PHYS[GXX],METRIC_PHYS[GXY],METRIC_PHYS[GXZ],METRIC_PHYS[GYY],METRIC_PHYS[GYZ],METRIC_PHYS[GZZ],METRIC_LAP_PSI4[PSI6]);
+        exit(1);  // Let's exit instead of printing potentially GBs of log files. Uncomment if you really want to deal with a mess.
       }
     }
     stats.failure_checker+=font_fix_applied*10000;

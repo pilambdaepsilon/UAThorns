@@ -200,7 +200,7 @@ void newman(struct c2p_report * c2p_rep, const double S_squared,
      CCTK_REAL xcs2S=0.0; CCTK_REAL xdedtS = 0.0; CCTK_REAL xdpderhoS = 0.0; CCTK_REAL xdpdrhoeS = 0.0; CCTK_REAL xmunuS = 0.0;
      EOS_Omni_short(c2p.eoskey, keytempS, c2p.eos_prec, 1, &xrhoS, &xepsS, &xtempS, &xyeS, &xpressS, &xentS, &xcs2S, &xdedtS, &xdpderhoS, &xdpdrhoeS, &xmunuS, &keyerr, &anyerr);
   prim[ENT]      = xentS;
-  prim[MU_HAT]   = 0.0;
+//  prim[MU_HAT]   = 0.0;
   }
 
   c2p_rep->count = step;

@@ -1,0 +1,10 @@
+# Main make.code.defn file for thorn rnsid
+# $Header$
+
+# Source files in this directory
+SRCS = rnsid_rfr.c rnsid.c rnsid_util.c hdf5_save.c \
+                  equil.c equil_util.c 
+
+# Subdirectories containing source files
+SUBDIRS = 
+

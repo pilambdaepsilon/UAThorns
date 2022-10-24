@@ -64,15 +64,15 @@ extern "C" void set_IllinoisGRMHD_metric_GRMHD_variables_based_on_HydroBase_and_
   for(int k=0;k<cctk_lsh[2];k++) for(int j=0;j<cctk_lsh[1];j++) for(int i=0;i<cctk_lsh[0];i++) {
 	int index=CCTK_GFINDEX3D(cctkGH,i,j,k);
 
-	rho_b[index] = rho[index]; rho_b[index] = MAX(rho_b[index], 1e-10); 
+	rho_b[index] = rho[index]; //rho_b[index] = MAX(rho_b[index], 1e-10); 
 	P[index] = press[index];
         if(init_real){
-           Temp[index] = 0.1;     //just initializing, we get temperature from other quantities later
+           Temp[index] = ID_Temp; //just initializing, we can get temperature from other quantities later
            Wlorentz[index] = 1.0; //just initializes... this is fixed after C2P
            Ent[index] = 1.0;
-           prim_eps[index]  = eps[index];
-           Ye[index]   = Y_e[index];Ye[index] = MAX(Ye[index], 0.036);Ye[index] = MIN(Ye[index], 0.25);
-           const int keytemp = 0; //assume temperature is unknown
+           prim_eps[index]  = eps[index]*1.0;
+           Ye[index]   = Y_e[index];//Ye[index] = MAX(Ye[index], 0.036);Ye[index] = MIN(Ye[index], 0.25);
+           const int keytemp = ID_keytemp;
 	   const int eoskey = 4;
            const double precEOS = *c2p_eos_prec;
            double xeps = prim_eps[index];
@@ -85,9 +85,16 @@ extern "C" void set_IllinoisGRMHD_metric_GRMHD_variables_based_on_HydroBase_and_
            int keyerr = 0;
            const int npoints = 1;
 	   double cH = ((xeps + xprs/xrho) + 1.0)*xrho; //given: rho, eps, P (and as such enthalpy), and Ye... get: T
-           EOS_Omni_press_from_rhoenthalpy(eoskey, keytemp, precEOS, 1, &xrho, &xeps, &xtemp, &xye, &xprs, &cH, &anyerr, &keyerr); //get new T using this cH (also gives consistent P)
-	   P[index] = xprs;                             //reset P to be consistent with cH(eps), rho, Ye
-           Temp[index] = xtemp;                         
+	   if(ID_keytemp==0){//we don't know Temp -- typically used for good ID, where all of the fluid variables are well known, or warm ID
+              EOS_Omni_press_from_rhoenthalpy(eoskey, keytemp, precEOS, 1, &xrho, &xeps, &xtemp, &xye, &xprs, &cH, &anyerr, &keyerr); //get new T using this cH (also gives consistent P)
+              Temp[index] = xtemp;                         
+	   }
+	   else if(ID_keytemp==1){//we don't know eps -- usual isothermal case. eps is often not well known due to interpolation errors from rho, P in ID
+              xtemp = ID_Temp;
+              EOS_Omni_press(eoskey, keytemp, precEOS, npoints, &xrho, &xeps, &xtemp, &xye, &xprs, &keyerr, &anyerr); //get new eps using this P, rho, and T
+              prim_eps[index] = xeps;
+	   }
+	   P[index] = xprs;                             //reset P to be consistent with new T or eps
            if (rho_b[index] <=  *c2p_eos_rho_atmo){
              P[index]          = *c2p_eos_P_atmo;
              Temp[index]  = *c2p_eos_T_atmo;
@@ -408,7 +415,7 @@ extern "C" void set_IllinoisGRMHD_metric_GRMHD_variables_based_on_HydroBase_and_
 	double TUPMUNU[10],TDNMUNU[10];
 
         struct output_stats stats; stats.failure_checker=0;
-	IllinoisGRMHD_enforce_limits_on_primitives_and_recompute_conservs(*c2p_eos_eoskey,zero_int,PRIMS,stats,eos,METRIC,g4dn,g4up,TUPMUNU,TDNMUNU,CONSERVS,index);
+	IllinoisGRMHD_enforce_limits_on_primitives_and_recompute_conservs(*c2p_eos_eoskey,*c2p_eos_yemin,*c2p_eos_yemax,zero_int,PRIMS,stats,eos,METRIC,g4dn,g4up,TUPMUNU,TDNMUNU,CONSERVS,index);
 
 	rho_b[index] = PRIMS[RHOB];
 	Ye[index]    = PRIMS[YE];

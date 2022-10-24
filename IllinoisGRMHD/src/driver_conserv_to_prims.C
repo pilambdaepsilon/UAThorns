@@ -322,10 +322,6 @@ extern "C" void IllinoisGRMHD_conserv_to_prims(CCTK_ARGUMENTS) {
         } else {
           stats.failure_checker+=1;
 
-          PRIMS[RHOB] = *c2p_eos_rho_atmo;
-          PRIMS[TEMP] = *c2p_eos_T_atmo;
-          PRIMS[YE]   = *c2p_eos_ye_atmo;
-          PRIMS[EPS]  = *c2p_eos_eps_atmo;
 
           if(!use_ConservativeToPrimitive){
             // Set to atmosphere if rho_star<0.
@@ -337,6 +333,10 @@ extern "C" void IllinoisGRMHD_conserv_to_prims(CCTK_ARGUMENTS) {
             }
           }else{
             PRIMS[PRESSURE] = *c2p_eos_P_atmo;
+            PRIMS[RHOB] = *c2p_eos_rho_atmo;
+            PRIMS[TEMP] = *c2p_eos_T_atmo;
+            PRIMS[YE]   = *c2p_eos_ye_atmo;
+            PRIMS[EPS]  = *c2p_eos_eps_atmo;
 //            PRIMS[RHOB]      =rho_b_atm;
             if(gamma_equals2) {
               PRIMS[PRESSURE]=K_poly*SQR(rho_b_atm);
@@ -353,7 +353,7 @@ extern "C" void IllinoisGRMHD_conserv_to_prims(CCTK_ARGUMENTS) {
 
         // Enforce limits on primitive variables and recompute conservatives.
         static const int already_computed_physical_metric_and_inverse=1;
-        IllinoisGRMHD_enforce_limits_on_primitives_and_recompute_conservs(*c2p_eos_eoskey, already_computed_physical_metric_and_inverse,PRIMS,stats,eos,METRIC,g4dn,g4up, TUPMUNU,TDNMUNU,CONSERVS,index);
+        IllinoisGRMHD_enforce_limits_on_primitives_and_recompute_conservs(*c2p_eos_eoskey, *c2p_eos_yemin, *c2p_eos_yemax, already_computed_physical_metric_and_inverse,PRIMS,stats,eos,METRIC,g4dn,g4up, TUPMUNU,TDNMUNU,CONSERVS,index);
 
         rho_star[index] = CONSERVS[RHOSTAR];
         Yet[index]      = CONSERVS[YET];

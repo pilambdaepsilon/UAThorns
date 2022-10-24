@@ -53,6 +53,12 @@ void prepare_c2p(CCTK_ARGUMENTS){
 
   if (c2p.eoskey == 4){
     EOS_nuc_eos_get_lims(&rhomi,&rhoma,&tmi,&tma,&yemi,&yema,&emi,&ema,&pmi,&pma);
+    *c2p_eos_yemin = yemi;
+    *c2p_eos_yemax = yema;
+  }
+  else{
+    *c2p_eos_yemin = rhomi;
+    *c2p_eos_yemax = rhoma;
   }
 
   c2p.eos_rho_min = rhomi;
@@ -116,8 +122,8 @@ void prepare_c2p(CCTK_ARGUMENTS){
   else if (CCTK_EQUALS(c2p_preferred_algorithm, "NR_3DP"))      c2p.c2p_method = 2;
   else if (CCTK_EQUALS(c2p_preferred_algorithm, "NR_2DR"))      c2p.c2p_method = 3;
   else if (CCTK_EQUALS(c2p_preferred_algorithm, "NR_2DW"))      c2p.c2p_method = 4;
-  else if (CCTK_EQUALS(c2p_preferred_algorithm, "palenzuela"))  c2p.c2p_method = 5;
-  else if (CCTK_EQUALS(c2p_preferred_algorithm, "NR_2D_Noble")) c2p.c2p_method = 6;
+  else if (CCTK_EQUALS(c2p_preferred_algorithm, "Palenzuela"))  c2p.c2p_method = 5;
+  else if (CCTK_EQUALS(c2p_preferred_algorithm, "Noble")) c2p.c2p_method = 6;
   else if (CCTK_EQUALS(c2p_preferred_algorithm, "Newman"))      c2p.c2p_method = 7;
   else if (CCTK_EQUALS(c2p_preferred_algorithm, "HARM")) c2p.c2p_method = 11;
   else CCTK_PARAMWARN("The specified solution method does not exist or is not implemented!");
@@ -128,8 +134,8 @@ void prepare_c2p(CCTK_ARGUMENTS){
   else if (CCTK_EQUALS(c2p_algorithm_retry, "NR_3DP"))      c2p.c2p_method_backup = 2;
   else if (CCTK_EQUALS(c2p_algorithm_retry, "NR_2DR"))      c2p.c2p_method_backup = 3;
   else if (CCTK_EQUALS(c2p_algorithm_retry, "NR_2DW"))      c2p.c2p_method_backup = 4;
-  else if (CCTK_EQUALS(c2p_algorithm_retry, "palenzuela"))  c2p.c2p_method_backup = 5;
-  else if (CCTK_EQUALS(c2p_algorithm_retry, "NR_2D_Noble")) c2p.c2p_method_backup = 6;
+  else if (CCTK_EQUALS(c2p_algorithm_retry, "Palenzuela"))  c2p.c2p_method_backup = 5;
+  else if (CCTK_EQUALS(c2p_algorithm_retry, "Noble")) c2p.c2p_method_backup = 6;
   else if (CCTK_EQUALS(c2p_algorithm_retry, "Newman"))      c2p.c2p_method_backup = 7;
   else if (CCTK_EQUALS(c2p_preferred_algorithm, "HARM")) c2p.c2p_method = 11;
   if ((c2p.c2p_method >= 12) || (c2p.c2p_method_backup >= 12)){

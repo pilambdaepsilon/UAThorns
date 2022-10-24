@@ -47,17 +47,17 @@ KEYWORD c2p_preferred_algorithm "Specify which algorithm to use" STEERABLE=alway
     "NR_3DP"      :: "3D Newton-Raphson based on Cerdá-Durán 2008 with P"
     "NR_2DR"      :: "2D Newton-Raphson based on Cerdá-Durán 2008 with rho"
     "NR_2DW"      :: "2D Newton-Raphson based on Cerdá-Durán 2008 with W"
-    "palenzuela"  :: "Palenzuela"
-    "NR_2D_Noble" :: "Noble"
+    "Palenzuela"  :: "Palenzuela"
+    "Noble"       :: "2D Newton-Raphson based on Noble et al."
     "Newman"      :: "Newman"
     "HARM"        :: "HARM"
     "auto"        :: "let the code decide"
-} "NR_2D_Noble"
+} "Noble"
 
 CCTK_INT c2p_max_iterations "How many iteration in the scheme"  STEERABLE=always
 {
     1: :: "At least a few"
-} 30
+} 300
 
 CCTK_INT c2p_extra_iterations "How many extra iteration in the scheme"  STEERABLE=always
 {
@@ -82,12 +82,12 @@ KEYWORD c2p_algorithm_retry "Specify which algorithm to use" STEERABLE=always
     "NR_3DP"      :: "3D Newton-Raphson based on Cerdá-Durán 2008 with P"
     "NR_2DR"      :: "2D Newton-Raphson based on Cerdá-Durán 2008 with rho"
     "NR_2DW"      :: "2D Newton-Raphson based on Cerdá-Durán 2008 with W"
-    "palenzuela"  :: "Palenzuela"
-    "NR_2D_Noble" :: "Noble"
+    "Palenzuela"  :: "Palenzuela"
+    "Noble"       :: "2D Newton-Raphson based on Noble et al."
     "Newman"      :: "Newman"
     "HARM"        :: "HARM"
     "auto"        :: "let the code decide"
-} "palenzuela"
+} "Palenzuela"
 
 BOOLEAN c2p_enforce_v2_smaller_than_1 "Enforce v2 < 1" STEERABLE=always
 {

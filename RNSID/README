@@ -1,0 +1,15 @@
+Cactus Code Thorn RNSID
+Author(s)    : Nik Stergioulas
+               Tom Goodale
+               Roberto De Pietri
+               Frank Löffler
+Maintainer(s): Roberto De Pietri
+               Nik Stergioulas
+Licence      : GPLv2+
+--------------------------------------------------------------------------
+
+Purpose of the thorn:
+
+This thorn provides initial data for a rotating neutron star.
+This version minimally extends the version in the EinsteinToolkit by allowing
+initialization of the electron fraction based on beta equilibrium

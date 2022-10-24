@@ -20,6 +20,7 @@ extern "C" void IllinoisGRMHD_RegisterVars(CCTK_ARGUMENTS)
   
   CCTK_INT ierr = 0, group, rhs;
 
+  //***********************************************
   // Register evolution & RHS gridfunction groups
 
   /* Ax and Ax_rhs */
@@ -48,5 +49,19 @@ extern "C" void IllinoisGRMHD_RegisterVars(CCTK_ARGUMENTS)
   ierr += MoLRegisterEvolvedGroup(group, rhs);
 
   if (ierr) CCTK_ERROR("Problems registering with MoL");
+  //***********************************************
 
+  //***********************************************
+  // Next register ADMBase variables needed by
+  //    IllinoisGRMHD as SaveAndRestore, so that
+  //    they are not set to NaN at the start of
+  //    each timestep (requiring that they be
+  //    e.g., recomputed from BSSN variables
+  //    in the BSSN solver, like Baikal or
+  //    ML_BSSN)
+  ierr += MoLRegisterSaveAndRestoreGroup(CCTK_GroupIndex("admbase::lapse"));
+  ierr += MoLRegisterSaveAndRestoreGroup(CCTK_GroupIndex("admbase::shift"));
+  ierr += MoLRegisterSaveAndRestoreGroup(CCTK_GroupIndex("admbase::metric"));
+  ierr += MoLRegisterSaveAndRestoreGroup(CCTK_GroupIndex("admbase::curv"));
+  if (ierr) CCTK_ERROR("Problems registering with MoLRegisterSaveAndRestoreGroup");
 }

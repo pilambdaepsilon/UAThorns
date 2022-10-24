@@ -101,7 +101,6 @@ static const int QCOV0  =1;
 static const int QCOV1  =2;
 static const int QCOV2  =3;
 static const int QCOV3  =4;
-//static const int QCOV4  =5;	//for Yet (definition or size of Q doesn't change with introduction of new primitive Ye
 
 /********************************************************************************************/
 // Function prototype declarations:

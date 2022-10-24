@@ -244,4 +244,6 @@ CCTK_REAL c2p_eos_real type = scalar
     c2p_eos_eps_atmo
     c2p_eos_rho_atmo
     c2p_eos_prec
+    c2p_eos_yemin
+    c2p_eos_yemax
 } "Useful REALs to be shared"

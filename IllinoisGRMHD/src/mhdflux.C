@@ -74,9 +74,11 @@ static inline void mhdflux(const int eos_key,const CCTK_REAL c2pprec,int i,int j
        // and fixes the ocassional crash caused by not setting eps=eps_cold in 
        // apply_tau_floor__enforce_limits_on_primitives_and_recompute_conservs.C
        
+       compute_P_cold__eps_cold__dPcold_drho__eps_th__h__gamma_cold(Ur,eos,P_coldr,eps_coldr,dPcold_drhor,eps_thr,h_r,gamma_coldr);
+       compute_P_cold__eps_cold__dPcold_drho__eps_th__h__gamma_cold(Ul,eos,P_coldl,eps_coldl,dPcold_drhol,eps_thl,h_l,gamma_coldl);
        P_l=Ul[PRESSURE]; P_r=Ur[PRESSURE];
-       h_r = 1.0 + Ur[EPS] + Ur[PRESSURE]/Ur[RHOB];
-       h_l = 1.0 + Ul[EPS] + Ul[PRESSURE]/Ul[RHOB];
+//       h_r = 1.0 + Ur[EPS] + Ur[PRESSURE]/Ur[RHOB];
+//       h_l = 1.0 + Ul[EPS] + Ul[PRESSURE]/Ul[RHOB];
     }
   }
 
@@ -223,6 +225,7 @@ static inline void mhdflux(const int eos_key,const CCTK_REAL c2pprec,int i,int j
 
   // HLL step for Sy:
   st_y_flux = (cminL*Fr + cmaxL*Fl - cminL*cmaxL*(st_y_r-st_y_l) )/(cmaxL + cminL);
+
   /********** Flux for S_z **********/
   // [S_z flux] = \alpha \sqrt{\gamma} T^m_z, where m is the current flux direction (the m index)
   //    Again, offset = 1 for reconstruction in x direction, 2 for y, and 3 for z

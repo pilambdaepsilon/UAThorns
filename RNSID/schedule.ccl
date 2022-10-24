@@ -1,0 +1,17 @@
+# Schedule definitions for thorn rnsid
+
+if (CCTK_Equals(initial_data,"rnsid"))
+{
+  STORAGE:ADMBase::metric[2],ADMBase::curv[2],ADMBase::lapse[2],ADMBase::shift[2]
+
+  schedule RNSID_CheckParameters  AT CCTK_PARAMCHECK
+  {
+    LANG: C
+  } "Check parameters"
+
+   SCHEDULE rnsid_init IN HydroBase_Initial
+   {
+     LANG: C
+     SYNC:   ADMBase::metric,   ADMBase::curv,   ADMBase::lapse,   ADMBase::shift
+  } "Create Rotating Neutron Star Initial Data"
+}

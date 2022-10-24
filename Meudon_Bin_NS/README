@@ -12,3 +12,8 @@ Import LORENE Bin_NS binary neutron star initial data.
 
 This thorn is one of three closely related thorns Meudon_Bin_BH,
 Meudon_Bin_NS, and Meudon_Mag_NS which all import LORENE initial data.
+
+
+this version has been extended by Pedro Espino for the purpose of initializing
+fluid variables relevant for finite temperature EOSs (electron fraction, temperature,
+energy density, etc.)

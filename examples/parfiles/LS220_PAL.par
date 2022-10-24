@@ -66,13 +66,6 @@ CoordBase::zmax =  384.0
 CoordBase::dx   =  6.678260869565217
 CoordBase::dy   =  6.678260869565217
 CoordBase::dz   =  6.678260869565217
-#CoordBase::dx   =  19.2
-#CoordBase::dy   =  19.2
-#CoordBase::dz   =  19.2
-#potato
-#CoordBase::dx   =   66.0
-#CoordBase::dy   =   66.0
-#CoordBase::dz   =   66.0
 
 CoordBase::boundary_size_x_lower     = 3
 CoordBase::boundary_size_y_lower     = 3
@@ -134,6 +127,9 @@ CarpetRegrid2::radius_1[3]  = 56.0
 CarpetRegrid2::radius_1[4]  = 28.0
 CarpetRegrid2::radius_1[5]  = 14.0
 CarpetRegrid2::radius_1[6]  = 7.0
+CarpetRegrid2::radius_1[7]  = 3.5
+CarpetRegrid2::radius_1[8]  = 1.75
+CarpetRegrid2::radius_1[9]  = 0.875
 
 CarpetMask::excluded_surface       [0] = 0
 CarpetMask::excluded_surface_factor[0] = 1.0
@@ -153,7 +149,6 @@ ADMBase::initial_shift           = "zero"
 ADMBase::initial_dtlapse         = "Meudon_Bin_NS"
 ADMBase::initial_dtshift         = "zero"
 
-#Meudon_Bin_NS::filename = "ID/GW170817_LS220_q1_compose.resu"
 Meudon_Bin_NS::filename = "ID/LS220_I1p64_45km_MEDRES.resu"
 Meudon_Bin_NS::eos_table = "nuc_eos"
 Meudon_Bin_NS::eos_table_filepath = "EOS/"
@@ -220,8 +215,8 @@ IllinoisGRMHD::conserv_to_prims_debug = 0
 IllinoisGRMHD::Psi6threshold = 1e100
 IllinoisGRMHD::damp_lorenz = 0.1
 Seed_Magnetic_Fields_BNS::enable_IllinoisGRMHD_staggered_A_fields = "yes"
-#Seed_Magnetic_Fields_BNS::A_b = 0.64428596382321
-Seed_Magnetic_Fields_BNS::A_b = 0.0
+Seed_Magnetic_Fields_BNS::A_b = 0.64428596382321
+#Seed_Magnetic_Fields_BNS::A_b = 0.0
 Seed_Magnetic_Fields_BNS::P_cut = 7.781463918147081e-06
 Seed_Magnetic_Fields_BNS::have_two_NSs_along_x_axis = "yes"
 Seed_Magnetic_Fields_BNS::x_c1 =  15.1875
@@ -246,12 +241,12 @@ ID_converter_ILGRMHD::init_real = "yes"
 ActiveThorns = "ConservativeToPrimitive"
 
 ConservativeToPrimitive::c2p_EOS_type                  = "nuc_eos"	# "2D_Polytrope" "Ideal_Fluid"(gamma law) "Hybrid" "nuc_eos" "cold_tabulated" "barotropic_tabulated" "ideal_gas"
-ConservativeToPrimitive::c2p_preferred_algorithm       = "palenzuela"  #NR_3DE, NR_3DP, NR_2DR, NR_2DW, palenzuela, NR_2D_Noble, Newman, auto
+ConservativeToPrimitive::c2p_preferred_algorithm       = "Palenzuela"  #NR_3DE, NR_3DP, NR_2DR, NR_2DW, palenzuela, Noble, Newman, auto
 ConservativeToPrimitive::c2p_max_iterations            = 100
 ConservativeToPrimitive::c2p_extra_iterations          = 0
 #ConservativeToPrimitive::c2p_tolerance_retry           = 1e-6
 #ConservativeToPrimitive::c2p_use_backup_scheme         = "yes"
-#ConservativeToPrimitive::c2p_algorithm_retry           = "NR_2D_Noble"
+#ConservativeToPrimitive::c2p_algorithm_retry           = "Noble"
 ConservativeToPrimitive::c2p_retain_B_atmo             = "no"
 ConservativeToPrimitive::c2p_excise                    = "no"
 ConservativeToPrimitive::c2p_grace                     = "no"		#gives a slightly higher tolerance for atmosphere
@@ -468,45 +463,6 @@ Outflow::verbose              = 1
 Outflow::out_format           = ".7e"
 Outflow::threshold_on_var     = "w_lorentz" # eninf
 Outflow::extra_variables      = "IllinoisGRMHD::vx IllinoisGRMHD::vy IllinoisGRMHD::vz IllinoisGRMHD::rho_b IllinoisGRMHD::P IllinoisGRMHD::prim_eps IllinoisGRMHD::Ye IllinoisGRMHD::Wlorentz IllinoisGRMHD::Ent IllinoisGRMHD::Temp"
-
-#####################################################################
-#                                                                    #
-#                            TRIGGERS                                #
-#                                                                    #
-######################################################################
-ActiveThorns = "Trigger"
-Trigger::Trigger_Number = 0
-Trigger::Trigger_Debug = 1
-
-Trigger::Trigger_Once                [0] = 1
-Trigger::Trigger_Checked_Variable    [0] = "IllinoisGRMHD::rho_b"
-Trigger::Trigger_Reduction           [0] = "maximum"
-Trigger::Trigger_Relation            [0] = "<"
-#Trigger::Trigger_Checked_Value       [0] = 0.0   #trigger off
-Trigger::Trigger_Checked_Value       [0] = 1.0
-Trigger::Trigger_Reaction            [0] = "steerscalar"
-Trigger::Trigger_Steered_Scalar      [0] = "CarpetRegrid2::num_levels[0]"
-Trigger::Trigger_Steered_Scalar_Value[0] = "7"
-
-Trigger::Trigger_Once                [1] = 1
-Trigger::Trigger_Checked_Variable    [1] = "IllinoisGRMHD::rho_b"
-Trigger::Trigger_Reduction           [1] = "maximum"
-Trigger::Trigger_Relation            [1] = "<"
-#Trigger::Trigger_Checked_Value       [1] = 0.0  #trigger off
-Trigger::Trigger_Checked_Value       [1] = 1.0
-Trigger::Trigger_Reaction            [1] = "steerscalar"
-Trigger::Trigger_Steered_Scalar      [1] = "CarpetRegrid2::num_levels[1]"
-Trigger::Trigger_Steered_Scalar_Value[1] = "7"
-
-Trigger::Trigger_Once                [2] = 1
-Trigger::Trigger_Checked_Variable    [2] = "IllinoisGRMHD::rho_b"
-Trigger::Trigger_Reduction           [2] = "maximum"
-Trigger::Trigger_Relation            [2] = "<"
-#Trigger::Trigger_Checked_Value       [2] = 0.0  #trigger off
-Trigger::Trigger_Checked_Value       [2] = 1.0
-Trigger::Trigger_Reaction            [2] = "steerscalar"
-Trigger::Trigger_Steered_Scalar      [2] = "CarpetRegrid2::num_levels[2]"
-Trigger::Trigger_Steered_Scalar_Value[2] = "7"
 
 #------------------------------------------------------------------------------
 # Checkpoint/Recovery:

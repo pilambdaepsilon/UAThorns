@@ -47,7 +47,7 @@ void EOSprim_from_rhoTYe(const int keytemp, double * prim){
       prim[EPS] = xeps;
       prim[ENT] = xent;
       prim[A_BAR] = xabar;
-      prim[MU_HAT] = 0.0;
+//      prim[MU_HAT] = 0.0;
 
     } else {
       xtemp = 0.0;

@@ -57,3 +57,13 @@ REAL gamma_th_new  "New Gamma_th for the evolution to be set after the ID are se
 {
     1:* :: "Anything greater than 1.0"
 } 1.33
+
+INT ID_keytemp "0 means we don't know the temperature, and it is recovered using epsilon. 1 means we do know the temperature and calculate epsilon based on it."
+{
+    0:1 :: "Anything greater than 1.0"
+} 1
+
+REAL ID_Temp  "initial isothermal temperature if keytemp is 1"
+{
+    0.01:* :: "[MeV] Anything greater than 0.01 MeV -- note some tables don't go below 0.1 MeV -- best not to use 0.01, which is often near table limits"
+} 0.1

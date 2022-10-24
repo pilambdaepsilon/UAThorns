@@ -74,6 +74,11 @@ static void compute_tau_rhs_extrinsic_curvature_terms_and_TUPmunu
           EOS_Omni_press(eos_key, keytemp, c2pprec, npoints, &xrho, &xeps, &xtemp, &xye, &xpress, &keyerr, &anyerr);
 
           h = 1. + xeps + xpress/xrho;
+	  if(eos_key!=4){
+            //for analytic EOS, recalculate h using the cold fluid quantities, this is also done in mhdflux.C and apply_tau_floor__enforce_limits_on_primitives_and_recompute_conservs.C
+            CCTK_REAL P_cold,eps_cold,dPcold_drho,eps_th,gamma_cold; 
+            compute_P_cold__eps_cold__dPcold_drho__eps_th__h__gamma_cold(U,eos,P_cold,eps_cold,dPcold_drho,eps_th,h,gamma_cold);
+	  }
         }
 
         CCTK_REAL Psi6 = METRIC_LAP_PSI4[PSI2]*METRIC_LAP_PSI4[PSI4];

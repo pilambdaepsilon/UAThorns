@@ -1,0 +1,12 @@
+# Interface definition for thorn rnsid
+# $Header$
+
+implements: rnsid
+
+USES INCLUDE: FishEye.h
+USES INCLUDE: Boundary.h
+USES INCLUDE: Symmetry.h
+
+inherits: ADMBase, HydroBase
+
+private:

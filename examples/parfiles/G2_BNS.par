@@ -247,17 +247,18 @@ CarpetLib::support_staggered_operators = "yes"
 IllinoisGRMHD::conserv_to_prims_debug = 0
 IllinoisGRMHD::Psi6threshold = 1e100
 IllinoisGRMHD::damp_lorenz = 0.1
-ID_converter_ILGRMHD::pure_hydro_run = "yes"
-#uncomment below for magnetized BNS
-#ActiveThorns = "Seed_Magnetic_Fields_BNS"
-#Seed_Magnetic_Fields_BNS::enable_IllinoisGRMHD_staggered_A_fields = "yes"
+#uncomment below for unmagnetized bns
+#ID_converter_ILGRMHD::pure_hydro_run = "yes"
 #Seed_Magnetic_Fields_BNS::A_b = 0.0
-#ID_converter_ILGRMHD::pure_hydro_run = "no"
-#Seed_Magnetic_Fields_BNS::A_b = 0.64428596382321
-#Seed_Magnetic_Fields_BNS::P_cut = 7.781463918147081e-06
-#Seed_Magnetic_Fields_BNS::have_two_NSs_along_x_axis = "yes"
-#Seed_Magnetic_Fields_BNS::x_c1 =  15.1875
-#Seed_Magnetic_Fields_BNS::x_c2 = -15.1875
+#uncomment below for magnetized bns
+ActiveThorns = "Seed_Magnetic_Fields_BNS"
+Seed_Magnetic_Fields_BNS::enable_IllinoisGRMHD_staggered_A_fields = "yes"
+ID_converter_ILGRMHD::pure_hydro_run = "no"
+Seed_Magnetic_Fields_BNS::A_b = 0.64428596382321
+Seed_Magnetic_Fields_BNS::P_cut = 7.781463918147081e-06
+Seed_Magnetic_Fields_BNS::have_two_NSs_along_x_axis = "yes"
+Seed_Magnetic_Fields_BNS::x_c1 =  15.1875
+Seed_Magnetic_Fields_BNS::x_c2 = -15.1875
 #IllinoisGRMHD::tau_atm= -0.00984698
 IllinoisGRMHD::rho_b_atm = 1e-10
 IllinoisGRMHD::gamma_th=2.0
@@ -277,12 +278,12 @@ HydroBase::initial_temperature = "zero"
 ActiveThorns = "ConservativeToPrimitive"
 
 ConservativeToPrimitive::c2p_EOS_type                  = "Ideal_Fluid" # "2D_Polytrope" "Ideal_Fluid" "Hybrid" "nuc_eos" "cold_tabulated" "barotropic_tabulated" "ideal_gas"
-ConservativeToPrimitive::c2p_preferred_algorithm       = "NR_2D_Noble"  #NR_3DE, NR_3DP, NR_2DR, NR_2DW, palenzuela, NR_2D_Noble, Newman, auto
+ConservativeToPrimitive::c2p_preferred_algorithm       = "Noble"  #NR_3DE, NR_3DP, NR_2DR, NR_2DW, palenzuela, NR_2D_Noble, Newman, auto
 ConservativeToPrimitive::c2p_max_iterations            = 30
 ConservativeToPrimitive::c2p_extra_iterations          = 0
 ConservativeToPrimitive::c2p_tolerance_retry           = 5e-7
 ConservativeToPrimitive::c2p_use_backup_scheme         = "no"
-ConservativeToPrimitive::c2p_algorithm_retry           = "palenzuela"
+ConservativeToPrimitive::c2p_algorithm_retry           = "Palenzuela"
 ConservativeToPrimitive::c2p_retain_B_atmo             = "no"
 ConservativeToPrimitive::c2p_excise                    = "no"
 ConservativeToPrimitive::c2p_grace                     = "no" #gives a slightly higher tolerance for atmosphere

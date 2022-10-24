@@ -368,8 +368,8 @@ void Meudon_Bin_NS_initialise (CCTK_ARGUMENTS)
 
       // Especially the velocity is set to strange values outside of the
       // matter region, so take care of this in the following way
-      if (rho[i] < 1.e-20) {
-        rho[i          ] = 1.e-20;
+      if (rho[i] < 1.e-15) {
+        rho[i          ] = 1.e-15;
         vel[i          ] = 0.0;
         vel[i+  npoints] = 0.0;
         vel[i+2*npoints] = 0.0;

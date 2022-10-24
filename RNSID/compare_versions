@@ -1,0 +1,16 @@
+#a=add_fluxes_and_source_terms_to_hydro_rhss.C; vimdiff $a ../../Backup/IllinoisGRMHD_p2b/src/$a
+#a=A_i_rhs_no_gauge_terms.C; vimdiff $a ../../Backup/IllinoisGRMHD_p2b/src/$a
+for file_path in $(ls)
+do
+    echo $file_path
+#    echo "Press any key to continue"
+    vimdiff $file_path $1/$file_path
+#    while [ true ] ; do
+#        read -t 3 -n 1
+#        if [ $? = 0 ] ; then
+#            continue ;
+#        else
+#            echo "Press any key to continue"
+#            fi
+#    done
+done

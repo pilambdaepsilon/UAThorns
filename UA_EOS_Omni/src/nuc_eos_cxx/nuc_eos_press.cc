@@ -220,9 +220,9 @@ void CCTK_FNAME(nuc_eos_P_from_Enthalpy)(const int *restrict n_in,
     double nlt = 0.0;
     nuc_eos_findtemp_enthalpy(lr,lt,*ye,lenthalpy,*prec,&nlt,keyerr);
 
-    if(*keyerr != 0) {
-      printf("3 Keyerr: %d, Temp: %g Rho: %g Eps: %g Ye: %g\n",*keyerr,*temp, *rho, eps, *ye);
-    }
+//    if(*keyerr != 0) {
+//      printf("3 Keyerr: %d, Temp: %g Rho: %g Eps: %g Ye: %g\n",*keyerr,*temp, *rho, eps, *ye);
+//    }
     lt = nlt;
 
     *temp = exp(lt);

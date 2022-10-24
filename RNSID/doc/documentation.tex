@@ -1,0 +1,288 @@
+% *======================================================================*
+%  Cactus Thorn template for ThornGuide documentation
+%  Author: Ian Kelley
+%  Date: Sun Jun 02, 2002
+%
+%  Thorn documentation in the latex file doc/documentation.tex
+%  will be included in ThornGuides built with the Cactus make system.
+%  The scripts employed by the make system automatically include
+%  pages about variables, parameters and scheduling parsed from the
+%  relevant thorn CCL files.
+%
+%  This template contains guidelines which help to assure that your
+%  documentation will be correctly added to ThornGuides. More
+%  information is available in the Cactus UsersGuide.
+%
+%  Guidelines:
+%   - Do not change anything before the line
+%       % START CACTUS THORNGUIDE",
+%     except for filling in the title, author, date, etc. fields.
+%        - Each of these fields should only be on ONE line.
+%        - Author names should be separated with a \\ or a comma.
+%   - You can define your own macros, but they must appear after
+%     the START CACTUS THORNGUIDE line, and must not redefine standard
+%     latex commands.
+%   - To avoid name clashes with other thorns, 'labels', 'citations',
+%     'references', and 'image' names should conform to the following
+%     convention:
+%       ARRANGEMENT_THORN_LABEL
+%     For example, an image wave.eps in the arrangement CactusWave and
+%     thorn WaveToyC should be renamed to CactusWave_WaveToyC_wave.eps
+%   - Graphics should only be included using the graphicx package.
+%     More specifically, with the "\includegraphics" command.  Do
+%     not specify any graphic file extensions in your .tex file. This
+%     will allow us to create a PDF version of the ThornGuide
+%     via pdflatex.
+%   - References should be included with the latex "\bibitem" command.
+%   - Use \begin{abstract}...\end{abstract} instead of \abstract{...}
+%   - Do not use \appendix, instead include any appendices you need as
+%     standard sections.
+%   - For the benefit of our Perl scripts, and for future extensions,
+%     please use simple latex.
+%
+% *======================================================================*
+%
+% Example of including a graphic image:
+%    \begin{figure}[ht]
+% 	\begin{center}
+%    	   \includegraphics[width=6cm]{MyArrangement_MyThorn_MyFigure}
+% 	\end{center}
+% 	\caption{Illustration of this and that}
+% 	\label{MyArrangement_MyThorn_MyLabel}
+%    \end{figure}
+%
+% Example of using a label:
+%   \label{MyArrangement_MyThorn_MyLabel}
+%
+% Example of a citation:
+%    \cite{MyArrangement_MyThorn_Author99}
+%
+% Example of including a reference
+%   \bibitem{MyArrangement_MyThorn_Author99}
+%   {J. Author, {\em The Title of the Book, Journal, or periodical}, 1 (1999),
+%   1--16. {\tt http://www.nowhere.com/}}
+%
+% *======================================================================*
+
+\documentclass{article}
+
+% Use the Cactus ThornGuide style file
+% (Automatically used from Cactus distribution, if you have a
+%  thorn without the Cactus Flesh download this from the Cactus
+%  homepage at www.cactuscode.org)
+\usepackage{../../../../doc/latex/cactus}
+
+\begin{document}
+
+% The title of the document (not necessarily the name of the Thorn)
+\title{Hydro\_RNSID}
+
+% The author of the documentation
+\author{Nik Stergioulas, Roberto De Pietri, Frank L\"ofller}
+
+% the date your document was last changed:
+\date{August 1 2017}
+
+\maketitle
+
+% Do not delete next line
+% START CACTUS THORNGUIDE
+
+% Add all definitions used in this documentation here
+%   \def\mydef etc
+
+% Add an abstract for this thorn's documentation
+\begin{abstract}
+Hydro\_RNSID - rotating relativistic neutron stars.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+This thorn generates neutron star initial data for the GRHydro code. As
+with the Einstein Toolkit code itself, please feel free to add, alter 
+or extend any part of this code. However please keep the documentation up to
+date (even, or especially, if it's just to say what doesn't work).
+
+This thorn effectively takes the public domain code {\tt RNSID}
+written by Nik Stergioulas and interpolates the output onto a
+Cartesian grid. This porting is based on an initila porting to 
+Whisky by Luca Baiotti and Ian Hawke and has been adapted to 
+GRHydro and Einstein Toolkit.
+
+
+\section{RNSID}
+\label{sec:rnsid}
+
+RNSID, or rotating neutron star initial data, is a code based on the
+Komatsu-Eriguch-Hachisu (KEH) method for constructing models of
+rotating neutron stars. It allows for polytropic or tabulated
+equations of state. For more details of the how the code works
+see~\cite{rnsid1}, \cite{nsthesis} (appendix A is particularly
+helpful) or especially \cite{nslivrev} which is the most up to date
+and lists other possible methods of constructing rotating neutron star
+initial data.
+
+In short Hydro\_RNSID is a thorn that generate initial model for rotating 
+isolated stars described by a zero-temperature tabulated Equation of State or
+an iso-entrophic politropic EOS. The activation of the thorn for
+genereting ID (The thorns ``Hydro\_Base'' and  ``GRHydro'' are the two prerequisites)
+
+The model are generated specifing the central baryonic density
+(rho\_central), the oblatness of the Star (axes\_ratio) and the
+rotational profile (rotation\_type).  Currently two kinds of
+rotational profiles are implemented: ``uniform'' for uniformly
+rotating stars and ``diff'' for differentially rotating stars,
+described by the j-law profile (parametrized by the parameter
+A\_diff=$\hat{A}$):
+\begin{equation}
+  \Omega_c-\Omega = \frac{1}{\hat{A}^2 r_e^2}
+  \left[ \frac{(\Omega-\omega) r^2 \sin^2 \theta e^{-2\nu}}{1-(\Omega-\omega)^2 r^2 \sin^2 \theta e^{-2\nu}}\right]
+\end{equation}
+where $r_e$ is the equatorial radius of the star and $\Omega$ is the
+rotational angular velocity $\Omega=u^\phi/u^0$ and $\Omega_c$ is
+$\Omega$ at the center of the star.
+
+
+\section{Parameters of Thorn}
+\label{sec:rnsid_par}
+
+Here one can find definition of the main parameter the determine the
+behaviour of the Thorn. The activation of the RNSID initial data
+is achieved by the following line:
+\begin{verbatim}
+ActiveThorns="Hydro_Base GRHydro Hydro_RNSID"
+#####
+##### Setting for activating the ID 
+#####
+ADMBase::initial_data  = "hydro_rnsid"
+ADMBase::initial_lapse = "hydro_rnsid"
+ADMBase::initial_shift = "hydro_rnsid"
+\end{verbatim}
+
+The correspongig section of the parameter file is:
+\begin{verbatim}
+#####
+##### Basic Setting
+#####
+Hydro_rnsid::rho_central   = 1.28e-3  # central baryon density (G=c=1) 
+Hydro_rnsid::axes_ratio    = 1        # radial/equatorial axes ratio 
+Hydro_rnsid::rotation_type = diff     # uniform = uniform rotation
+Hydro_rnsid::A_diff        = 1        # Parameter of the diff rot-law.
+Hydro_rnsid::accuracy      = 1e-10    # accuracy goal for convergence
+\end{verbatim}
+
+
+
+Than a section for setting the Equation of State (EOS) should be added.
+If this section is missing a ``poly'' EOS will be used with default parameters.
+The two possibilities are:
+\begin{description}
+\item{\textbf{Isentropic Polytrope:}}
+  
+  In this case the base setting for the initial data are specified
+  giving the following parameters:
+\begin{verbatim}
+#####
+##### Setting for polytrope
+#####
+Hydro_rnsid::eos_type  = "poly"  
+Hydro_rnsid::RNS_Gamma = 2.0
+Hydro_rnsid::RNS_K     = 165   
+\end{verbatim}
+They correspond at the following implementation of the EOS
+that it is consistent with the 1st Law of thermodinamics.
+\begin{eqnarray}
+   p         &=& K \cdot \rho^\Gamma \\
+   \epsilon &=& \frac{K}{\Gamma-1} \cdot \rho^{\Gamma-1} 
+\end{eqnarray}
+and for the above choice of parameters corresponding to the choice $K=165$ (in units where $G=c=M_\odot=1$) and $\Gamma=2$.
+
+\item{\textbf{Tabulated EOS:}}
+
+  In this case the (cold) EOS used to
+  generate the initial data is read from a file
+
+\begin{verbatim}
+#####
+##### Setting for tabulated EOS
+#####
+Hydro_rnsid::eos_type  = "tab"   
+Hydro_rnsid::eos_file  = "full_path_name_of_the tabulated_EOS_file"
+\end{verbatim}
+  The syntax of the tabulated file is the same as for the original
+  RNSID program and assumes that all quantities are expressed in the
+  cgs system of units. The first line contains the number of tabulated
+  values ($N$) while the next $N$ lines contain the values:
+  $e=\rho(1+\varepsilon)$, $p$, $\log h = c^2 \log_e((e+p)/\rho)$, and
+  $\rho$, respectively.
+\end{description}
+
+
+An additional section allows one to start initial data from a
+previously generated binary file or to save the data generated at this
+time. Usually the best way to proceed is to specify where the initial
+data file should be located.
+\begin{verbatim}
+#####
+##### Setting for recover and saving of 2d models 
+#####
+Hydro_rnsid::save_2Dmodel    = "yes"   # other possibility is no (default)
+Hydro_rnsid::recover_2Dmodel = "yes"   # other possibility is no (default)
+Hydro_rnsid::model2D_file    = "full_file_name"
+\end{verbatim}
+
+For examples of initial data generated using RNSID and their
+evolutions, see~\cite{rotns1,rotns2}. In the par directory, examples
+are provided as a perl file that produces the corresponding Cactus par
+files. These examples correspond to the evolutions described
+in~\cite{rotns1,rotns2}.
+
+\section{Utility program}
+
+Together with the Thorn, we distribute a self-executable version of
+the initial data routine RNSID that accepts the same parameters as the
+thorn and is able to create a binary file of the 2d initial data that
+can be directly imported into the evolution code. Moreover, the
+program RNS\_readID is provided that reads a 2d initial data file and
+produces an hdf5 version of the data interpolated onto a 3d grid.
+
+
+\begin{thebibliography}{1}
+
+\bibitem{rotns1}
+J.~A. Font, N. Stergioulas and K.~D. Kokkotas.
+\newblock Nonlinear hydrodynamical evolution of rotating relativistic
+stars: Numerical methods and code tests.
+\newblock {\em Mon. Not. Roy. Astron. Soc.}, {\bf 313}, 678, 2000.
+
+\bibitem{rotns2}
+F.~L\"offler, R.~De Pietri, A.~Feo, F.~Maione and L.~Franci, 
+\newblock Stiffness effects on the dynamics of the bar-mode instability 
+of neutron stars in full general relativity. 
+\newblock {\em Phys. Rev.}, {\bf D 91}, 064057, 2015 (arXiv:1411.1963).
+
+\bibitem{rnsid1}
+N. Stergioulas and J.~L. Friedmann.
+\newblock Comparing models of rapidly rotating relativistic stars
+constructed by two numerical methods.
+\newblock {\em ApJ.}, {\bf 444}, 306, 1995.
+
+\bibitem{nsthesis}
+N. Stergioulas.
+\newblock The structure and stability of rotating relativistic stars.
+\newblock PhD thesis, University of Wisconsin-Milwaukee, 1996.
+
+\bibitem{nslivrev}
+N. Stergioulas.
+\newblock Rotating Stars in Relativity
+\newblock {\em Living Rev. Relativity}, {\bf 1}, 1998.
+\newblock [Article in online journal], cited on 18/3/02,
+  http://www.livingreviews.org/Articles/Volume1/1998-8stergio/index.html.
+
+\end{thebibliography}
+
+% Do not delete next line
+% END CACTUS THORNGUIDE
+
+\end{document}

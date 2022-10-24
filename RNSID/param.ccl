@@ -1,0 +1,143 @@
+# Parameter definitions for thorn Hydro_rnsid
+# $Header$
+
+shares:HydroBase
+
+USES CCTK_INT timelevels
+
+private:
+
+########## -----------------------------------------------------------------
+
+KEYWORD rotation_type "Specify type of rotation law"
+{
+ "uniform" :: "uniform rotation"
+ "diff" :: "KEH differential rotation law"
+} "uniform"
+
+
+REAL axes_ratio "rnsid axes ratio"
+{
+  0: :: "Any positive number"
+} 1
+
+REAL rho_central "Central Density for Star"
+{
+  : :: ""
+} 1.24e-3
+
+REAL A_diff "constant A in differential rotation law"
+{
+  0.0: :: "Any positive number"
+} 1.0
+
+########## -----------------------------------------------------------------
+
+KEYWORD eos_type "Specify type of equation of state"
+{
+ "poly" :: "Polytropic EOS"
+ "tab"  :: "Tabulated EOS"
+} "poly"
+
+REAL RNS_Gamma "If we're using a different EoS at run time, this is the RNS Gamma"
+{
+  *:* :: "Will be ignored if negative"
+} 2
+
+REAL RNS_K "If we're using a different EoS at run time, this is the RNS K"
+{
+  *:* :: "Will be ignored if negative"
+} 100
+
+
+STRING eos_file "Equation of state table"
+{
+ .* :: "EOS table file"
+} ""
+######## NEW Y_E STUFF ########
+BOOLEAN use_beta_equil_Y_e "Initialize Y_e based on beta equilibrium table?"
+{
+} "no"
+STRING beta_equil_file "table holding {rho[g/cm^3], Y_e} corresponding to beta equilibrium"
+{
+ .* :: "EOS table file"
+} ""
+
+########## -----------------------------------------------------------------
+
+REAL RNS_rho_min "A minimum rho below which evolution is turned off (atmosphere)."
+{
+ 0.0: :: "Atmosphere detection for RNSID"
+} 1.0e-14
+
+REAL RNS_atmo_tolerance "A point is set to atmosphere if rho < (1+RNS_atmo_tolerance)*RNS_rho_min"
+{
+   0.0: :: "Zero or larger. A useful value could be 0.0001"
+}  0.00001
+
+
+REAL accuracy "rnsid accuracy in convergence "
+{
+  0: :: "Any positive number"
+} 1.0e-7
+
+
+KEYWORD zero_shift "Set shift to zero?"
+{
+ "yes" :: "set shift to zero"
+ "no" :: "don't set shift to zero"
+} "no"
+
+KEYWORD save_2Dmodel "Save 2D model?"
+{
+ "yes" :: "save 2D model"
+ "no" :: "don't save 2D model"
+} "no"
+
+KEYWORD recover_2Dmodel "Recover 2D model?"
+{
+ "yes" :: "recover 2D model"
+ "no" :: "don't recover 2D model"
+} "no"
+
+STRING model2D_file "Name of 2D model file"
+{
+ .* :: "Default 2D model file"
+} "model2D.dat"
+
+
+REAL cf "Convergence factor"
+{
+  0:  ::  "Any positive number"
+} 1.0
+
+INT RNS_lmax "max. term in Legendre poly."
+{
+ 1: :: "Any positive, non zero number"
+} 10
+
+
+########## -----------------------------------------------------------------
+
+shares: ADMBase
+EXTENDS KEYWORD initial_data ""
+{
+  "rnsid"	:: "Construnct stationary initial data with rnsid"
+}
+
+EXTENDS KEYWORD initial_lapse ""
+{
+  "rnsid"	:: "Construnct stationary initial data with rnsid"
+}
+
+EXTENDS KEYWORD initial_shift ""
+{
+  "rnsid"	:: "Construnct stationary initial data with rnsid"
+}
+
+shares: hydrobase
+EXTENDS KEYWORD initial_hydro ""
+{
+  "rnsid"	:: "Construnct stationary initial data with rnsid"
+}
+

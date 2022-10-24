@@ -1,0 +1,38 @@
+# Main make.configuration.deps file for thorn RNS
+
+# some make magic.
+# 1. MAKEFILE_LIST is the list of makefile with this Makefile being last
+# 2. $(dir ...) gives the "a/b/c/" part of "a/b/c/d"
+# 3. $(patsubst %/,%,$(FOO)) removes the trailing /
+# 4. the THORN_DIR and ARRANGEMENT_DIR thus strip directories from the end
+HYDRO_RNS_MAKEFILE_DIR:=$(dir $(lastword $(MAKEFILE_LIST)))
+
+HYDRO_RNS_THORN_DIR:=$(dir $(patsubst %/,%,$(HYDRO_RNS_MAKEFILE_DIR)))
+HYDRO_RNS_ARRANGEMENT_DIR:=$(dir $(patsubst %/,%,$(HYDRO_RNS_THORN_DIR)))
+
+HYDRO_RNS_THORN_NAME:=$(lastword $(subst /, ,$(patsubst %/,%,$(HYDRO_RNS_THORN_DIR))))
+HYDRO_RNS_ARRANGEMENT_NAME:=$(lastword $(subst /, ,$(patsubst %/,%,$(HYDRO_RNS_ARRANGEMENT_DIR))))
+
+HYDRO_RNS_BUILD_DIR := $(BUILD_DIR)/$(HYDRO_RNS_THORN_NAME)
+HYDRO_RNS_SRC_DIR   := $(PACKAGE_DIR)/$(HYDRO_RNS_ARRANGEMENT_NAME)/$(HYDRO_RNS_THORN_NAME)/src
+HYDRO_RNS_CFLAGS  := -DCCODE $(CFLAGS)
+
+HYDRO_RNS_CFLAGS += -I$(CONFIG) -I$(BINDINGS_DIR)/include -I$(FLESH_DIR)/include -I$(PACKAGE_DIR)/include $(HDF5_INC_DIRS:%=-I%) $(MPI_INC_DIRS:%=-I%) $(CPPFLAGS)
+HYDRO_RNS_LDFLAGS := $(HYDRO_RNS_CFLAGS) $(DEBUG_LD) $(LDFLAGS) $(EXTRAFLAGS) $(GENERAL_LIBRARIES)
+HYDRO_RNS_OBJ := $(HYDRO_RNS_BUILD_DIR)/equil.o $(HYDRO_RNS_BUILD_DIR)/equil_util.o $(HYDRO_RNS_BUILD_DIR)/hdf5_save.o
+HYDRO_RNS_OBJ += $(HYDRO_RNS_BUILD_DIR)/rnsid_util.o
+
+# general linking rule
+
+$(UTIL_DIR)/%: $(HYDRO_RNS_BUILD_DIR)/%.o $(HYDRO_RNS_OBJ)
+	@echo Creating $* in $(UTIL_DIR) from $<
+	-$(MKDIR) $(MKDIRFLAGS) $(UTIL_DIR)
+	$(LD) -I$(HYDRO_RNS_SRC_DIR) $<  $(HYDRO_RNS_OBJ) $(HYDRO_RNS_LDFLAGS)  -o $@
+
+
+# general compile rule
+
+$(HYDRO_RNS_BUILD_DIR)/%.o: $(HYDRO_RNS_SRC_DIR)/%.c
+	@echo Compiling $<
+	-$(MKDIR) $(MKDIRFLAGS) $(HYDRO_RNS_BUILD_DIR)
+	$(CC) $(HYDRO_RNS_CFLAGS) -DRNS_SEQ_COMPILATION -I$(HYDRO_RNS_SRC_DIR)/include $< $(HYDRO_RNS_CFLAGS) -DTHORN_IS_$(THORN_NAME) -c -o $@

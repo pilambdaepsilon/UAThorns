@@ -1,0 +1,46 @@
+# Schedule definitions for thorn HydroAnalysis
+
+STORAGE: RhoBFinder_rho_b_max_loc
+STORAGE: RhoBFinder_rho_b_max
+
+schedule RhoBFinder_Init AT PRESTEP
+{
+  LANG: C
+  OPTIONS: global
+} "Initialize variables"
+
+schedule group RhoBFinder AT POSTSTEP BEFORE SphericalSurface_HasBeenSet
+{
+} "Group for RhoBFinder routines"
+
+schedule RhoBFinder_Reduction IN RhoBFinder
+{
+  LANG: C
+  OPTIONS: global
+} "Compute the global reduction results"
+
+schedule GROUP RhoBFinder_LocationSearch IN RhoBFinder AFTER RhoBFinder_Reduction
+{
+} "Look for the location of the maximum rho_b"
+
+schedule RhoBFinder_LocationSearch_Setup IN RhoBFinder_LocationSearch
+{
+    LANG: C
+    OPTIONS: global
+} "Prepare data structures for search"
+# this is not perfect, loop-local calls us in all timelevels, not just
+# the ones that a local routine would be called on, so we are mixing
+# information from different times. Also not sure what happens if Carpet
+# performs time interpolation for the maximum reduction. Fine is the maximum
+# is on the finest level.
+schedule RhoBFinder_LocationSearch_Search IN RhoBFinder_LocationSearch AFTER RhoBFinder_LocationSearch_Setup
+{
+    LANG: C
+    OPTIONS: global loop-local
+} "Search for the location of the maximum rho_b"
+
+schedule RhoBFinder_LocationSearch_Combine IN RhoBFinder_LocationSearch AFTER RhoBFinder_LocationSearch_Search
+{
+    LANG: C
+    OPTIONS: global
+} "Communicate and verify the location of the maximum rho_b"
