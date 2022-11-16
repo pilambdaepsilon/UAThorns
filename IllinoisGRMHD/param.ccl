@@ -55,7 +55,7 @@ INT force_regrid "0: no, 1: yes" STEERABLE=ALWAYS
 # Limiters on tau and rho_b:
 REAL tau_atm "Floor value on the energy variable tau (cf. tau_stildefix_enable). Given the variety of systems this code may encounter, there *is no reasonable default*. Effectively the current (enormous) value should disable the tau_atm floor. Please set this in your initial data thorn, and reset at will during evolutions." STEERABLE=ALWAYS
 {
- -1:* :: "Positive"
+ 0:* :: "Positive"
 } 1e100
 
 REAL rho_b_atm "Floor value on the baryonic rest mass density rho_b (atmosphere). Given the variety of systems this code may encounter, there *is no reasonable default*. Your run will die unless you override this default value in your initial data thorn." STEERABLE=ALWAYS
@@ -119,7 +119,7 @@ KEYWORD EM_BC "EM field boundary condition"
 # SYMMETRY BOUNDARY PARAMS. Needed for handling staggered gridfunctions.
 KEYWORD Symmetry "Currently only no symmetry supported, though work has begun in adding equatorial-symmetry support. FIXME: Extend ET symmetry interface to support symmetries on staggered gridfunctions"
 {
-  ""       :: "no symmetry, full 3d domain"
+  "none"       :: "no symmetry, full 3d domain"
 } "none"
 
 REAL Sym_Bz "In-progress equatorial symmetry support: Symmetry parameter across z axis for magnetic fields = +/- 1"
